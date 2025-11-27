@@ -9,6 +9,7 @@ const formRegister = z.object({
   email: z.string().email("Invalid email address"),
   password: z.string().min(6),
 });
+
 type FormValue = z.infer<typeof formRegister>;
 import { Button } from "@/components/ui/button";
 import {
@@ -21,12 +22,15 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useState } from "react";
+import ForgotPasswordModal from "@/app/(auth)/login/ForgotPasswordModal";
 
 const envConfig = {
   API_URL: process.env.NEXT_PUBLIC_API_URL,
 };
 
 export default function LoginForm() {
+  const [openForgot, setOpenForgot] = useState(false);
   const router = useRouter();
   const form = useForm<FormValue>({
     resolver: zodResolver(formRegister),
@@ -44,7 +48,7 @@ export default function LoginForm() {
         },
         method: "POST",
       }).then(async (res) => {
-        const payload = await res.text();
+        const payload = await res.json();
         console.log("Login Response:", payload);
         if (!res.ok) {
           throw data;
@@ -52,10 +56,11 @@ export default function LoginForm() {
 
         return payload;
       });
-      toast.error("Đăng nhập thành công");
+      console.log(result);
+      toast.success("Đăng nhập thành công");
       const resultFromNextSever = await fetch("/api/auth", {
         method: "POST",
-        body: JSON.stringify({ token: result }),
+        body: JSON.stringify({ token: result.token, userId: result.userId }),
         headers: {
           "Content-Type": "application/json",
         },
@@ -130,14 +135,28 @@ export default function LoginForm() {
               </FormItem>
             )}
           />
+          <div className="flex justify-between">
+
           <Button
             className="bg-white text-black  hover:bg-blue-600 hover:text-white"
             type="submit"
           >
             Login
           </Button>
+           <button
+            type="button"
+            onClick={() => setOpenForgot(true)}
+            className="text-sm text-white  hover:underline"
+          >
+            Quên mật khẩu?
+          </button>
+          </div>
         </form>
       </Form>
+        <ForgotPasswordModal
+        isOpen={openForgot}
+        onClose={() => setOpenForgot(false)}
+      />
     </div>
   );
 }

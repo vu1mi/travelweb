@@ -9,11 +9,9 @@ import Footer from "@/components/footer";
 import { Toaster } from "sonner";
 import AppProvider from "@/app/AppProvider";
 import { cookies } from "next/headers";
-import { se } from "date-fns/locale";
 import HeaderLogin from "@/components/heade-login";
 import ChatBotWidget from "@/components/chatbotai/chatbotcompoent";
 import { headers } from "next/headers";
-// import { usePathname } from "next/navigation";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -30,11 +28,9 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  // const pathname = usePathname();
-  // const hideHeader = pathname === "/login" || pathname === "/register";
-
   const cookieStore: any = await cookies();
   const sessionToken = cookieStore.get("sessionToken");
+  const userId = cookieStore.get("userId");
 
   return (
     <html lang="vi" suppressHydrationWarning>
@@ -48,11 +44,15 @@ export default async function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <Toaster />
-          <InforHeader />
-          {sessionToken?.value ? <HeaderLogin /> : <Headers />}
+          <Toaster richColors />
+ 
 
-          <AppProvider inittialValue={sessionToken?.value}>
+          <AppProvider
+            inittialToken={sessionToken?.value}
+            inittialUserId={userId?.value}
+          >
+              <InforHeader />
+          {sessionToken?.value ? <HeaderLogin /> : <Headers />}
             {children}
           </AppProvider>
           <ChatBotWidget />

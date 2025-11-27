@@ -4,7 +4,11 @@ import { createContext, useContext, useState } from "react";
 
 const AppContext = createContext({
   sessionToken: "",
+  userId: "",
   setSessionToken: (sessionToken: string) => {},
+  setUserId: (userId: string) => {},
+  cart: {},
+  setCart: (cart: any) => {},
 });
 
 export const useAppContext = () => {
@@ -17,20 +21,28 @@ export const useAppContext = () => {
 
 export default function AppProvider({
   children,
-  inittialValue,
+  inittialToken,
+  inittialUserId,
 }: {
   children: React.ReactNode;
-  inittialValue: string | undefined;
+  inittialToken: string | undefined;
+  inittialUserId: string | undefined;
 }) {
-  const [sessionToken, setSessionToken] = useState(inittialValue || "");
-  const [tourid, setTourid] = useState({
-    id: 0,
-    name: "",
-    imageUrl: "",
-    originalPrice: 0,
-  });
+  const [sessionToken, setSessionToken] = useState(inittialToken || "");
+  const [userId, setUserId] = useState(inittialUserId || "");
+  const [cart, setCart] = useState({});
+
   return (
-    <AppContext.Provider value={{ sessionToken, setSessionToken }}>
+    <AppContext.Provider
+      value={{
+        sessionToken,
+        setSessionToken,
+        userId,
+        setUserId,
+        cart,
+        setCart,
+      }}
+    >
       {children}
     </AppContext.Provider>
   );

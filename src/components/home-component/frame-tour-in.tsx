@@ -37,7 +37,7 @@ export default function TourIn() {
         Tour Trong Nước
       </h2>
       <div className="flex gap-5 mt-12 flex-wrap">
-        {showtourin.map((tour: any) => {
+        {showtourin?.map((tour: any) => {
           return <TourCard key={tour.id} tour={tour} />;
         })}
       </div>

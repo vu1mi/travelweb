@@ -1,10 +1,13 @@
+
 import NavBarHeader from "@/components/navigation_menu_header";
 import Image from "next/image";
 import Link from "next/link";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import IconCard from "@/components/icon-cart";
 
 export default function HeaderLogin() {
+  
   return (
     <div className=" flex justify-center  pt-[20px] pb-[20px]  bg-white  shadow-md">
       <div className=" flex items-center justify-between xl:w-[1280px]">
@@ -15,12 +18,7 @@ export default function HeaderLogin() {
         <div className="flex gap-2 mr-4 ml-auto items-center">
           <NavBarHeader />
           <Link href={"/order"}>
-            <Image
-              src={"/icon-cart.svg"}
-              alt="logo-cart"
-              width={24}
-              height={24}
-            />
+            <IconCard  />
           </Link>
           <Link href={"/"} className="ml-8">
             <Avatar className="border-3 w-{24px} h-{24px}">

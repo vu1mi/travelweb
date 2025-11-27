@@ -1,10 +1,44 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import {  useMemo} from "react";
+import CardItemOrder from "@/app/order/carditem_order";
 
-export default function CartSummary() {
+interface CartItem {
+  id: number;
+  tourId: number;
+  tourName: string;
+  departureDate: number[];
+  departureLocation:string;
+  adultCount: number;
+  childCount: number;
+  infantCount: number;
+  pricePerAdult: number;
+  pricePerChild: number;
+  pricePerInfant: number;
+  subTotal: number;
+}
+interface SummaryProps {
+  data: CartItem[] | null;
+  onRefresh: () => Promise<void>;
+}
+
+export default function CartSummary( { data, onRefresh }: SummaryProps) {
+  const discount = 0;
+  // const list = data ?? [];
+
+  console.log("log data", data);
+  console.log("log re", onRefresh);
+
+  const total = useMemo(() => {
+    return (
+      data?.reduce((sum: number, item: CartItem) => sum + item.subTotal, 0) ?? 0
+    );
+  }, [data]);
+  const finaltotal = useMemo(() => {
+    return total - discount;
+  }, [total, discount]);
+
   return (
     <div className="max-w-5xl mx-auto bg-white p-6 rounded-2xl shadow-sm mt-6 ">
       {/* Header */}
@@ -18,52 +52,11 @@ export default function CartSummary() {
             Quay lại mua hàng →
           </Link>
         </div>
-        <div className="flex items-start gap-4 p-4  bg-white w-full ">
-          {/* Ảnh tour */}
-          <div className="relative w-40 h-28 flex-shrink-0 overflow-hidden rounded-lg">
-            <label>
-              <input type="checkbox" />
-            </label>
-
-            <Image
-              src="/blog-1.png" // đặt ảnh vào public/images
-              alt="Tour Châu Âu Đón Noel"
-              fill
-              className="object-cover"
-            />
-          </div>
-
-          {/* Thông tin tour */}
-          <div className="flex-1">
-            <h2 className="text-lg font-semibold text-gray-800">
-              Tour Châu Âu Đón Noel | 11N10D | Pháp – Thụy Sĩ – Ý
-            </h2>
-            <p className="text-sm text-gray-600 mt-1">
-              <span className="font-medium">Mã Tour:</span> 123456789
-            </p>
-            <p className="text-sm text-gray-600">
-              <span className="font-medium">Ngày Khởi Hành:</span> 20/10/2024
-            </p>
-            <p className="text-sm text-gray-600 mb-3">
-              <span className="font-medium">Khởi Hành Tại:</span> Hà Nội
-            </p>
-          </div>
-          {/* Số lượng hành khách */}
-          <div className="  text-sm text-gray-700 flex flex-col gap-2 mr-3 ">
-            <p className="text-[18px]">Số Lượng Hành Khách</p>
-            <p>
-              <span className="font-medium">Người lớn:</span> 1 x{" "}
-              <span className="text-purple-600 font-semibold">10.000.000</span>
-            </p>
-            <p>
-              <span className="font-medium">Trẻ em:</span> 0 x{" "}
-              <span className="text-purple-600 font-semibold">7.990.000</span>
-            </p>
-            <p>
-              <span className="font-medium">Em bé:</span> 0 x{" "}
-              <span className="text-purple-600 font-semibold">5.990.000</span>
-            </p>
-          </div>
+        
+        <div className="flex flex-col gap-10">
+          { (data && data.length !== 0) ? data?.map((item) => (
+            <CardItemOrder data={item} key={item.id} onRefresh={onRefresh}/>
+          )) : <div className="h-[200px] flex justify-center items-center text-3xl text-blue-700 ">Chưa có tour nào</div>}
         </div>
       </div>
 
@@ -89,17 +82,17 @@ export default function CartSummary() {
       <div className="space-y-1 text-gray-700 text-sm max-w-5xl">
         <div className="flex justify-between">
           <span>Tổng tiền:</span>
-          {/* <span>{total.toLocaleString("vi-VN")} đ</span> */}
+          <span>{total.toLocaleString("vi-VN")} đ</span>
         </div>
         <div className="flex justify-between">
           <span>Giảm:</span>
-          {/* <span className="text-red-600">
+          <span className="text-red-600">
             -{discount.toLocaleString("vi-VN")} đ
-          </span> */}
+          </span>
         </div>
         <div className="flex justify-between font-bold text-lg text-purple-700 mt-2">
           <span>Thanh toán:</span>
-          {/* <span>{finalAmount.toLocaleString("vi-VN")} đ</span> */}
+          <span>{finaltotal.toLocaleString("vi-VN")} đ</span>
         </div>
       </div>
     </div>

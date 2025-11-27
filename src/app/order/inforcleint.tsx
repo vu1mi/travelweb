@@ -1,26 +1,106 @@
 "use client";
 import { useState } from "react";
-
-export default function PaymentForm() {
-  const [paymentMethod, setPaymentMethod] = useState("");
-  const [formData, setFormData] = useState({
-    name: "",
-    phone: "",
-    note: "",
-  });
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+import { useAppContext } from "@/app/AppProvider";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+export default function PaymentForm(data:any) {
+  const route = useRouter();
+  const { userId } = useAppContext();
+  const [username , setUsername] = useState('')
+  const [phone , setPhone] = useState('')
+  const [payId , setPayId] = useState(0)
+  const [note , setNote] = useState('')
+  const [payStatus , setPayStartus] = useState(0)
+  const idbooking = data?.data?.id ?? 0;
+  console.log(idbooking)
+  const formData= {
+    userId:userId,
+    customerName: username,
+    customerPhone: phone,
+    paymentMethodId:payId,
+    paymentStatus:payStatus,
+    status:1,
+    note: note
   };
 
-  const handlePaymentSelect = (method) => {
-    setPaymentMethod(method);
+
+
+  const handlePaymentSelect =  (method:number) => {
+    setPayId(method)
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async  (e:React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    alert("Đặt tour thành công!");
+   
+     if (!username.trim()) {
+      toast.warning("Tên không được để trống");
+    return;
+  }
+
+  if (!phone.trim()) {
+    toast.warning("Số điện thoại không được để trống");
+    return;
+  }
+
+  if (phone.length < 10|| phone[0] !== "0") {
+    toast.warning("Số điện thoại không hợp lệ");
+    return;
+  }
+  if (payId === 0) {
+    toast.warning("Chọn phương thức thanh toán");
+    return;
+  }
+  if(idbooking === 0){
+    toast.warning("Tour đang trống");
+    return;
+  }
+  try{
+  
+      const res = await fetch(`http://localhost:8088/api/bookings/${idbooking}`,
+        {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(formData)
+  }
+      ) 
+      const result = await res.json()
+      if(!res.ok){
+        throw new Error("Update failed");
+      }
+      if(payId === 3){
+        const res = await fetch("http://localhost:8088/api/vnpay/create-payment" , 
+          {
+             method: "POST",
+             headers: {
+             "Content-Type": "application/json"
+                  },
+               body: JSON.stringify({
+               bookingId: idbooking
+          })
+         }
+
+        ).then( async res => {
+            const data = await res.json();
+            window.location.href = data.paymentUrl;
+            console.log("vnpay res:" , data)
+
+            return data
+        })
+      }else{
+         console.log("dat tua thanh cong", result)
+         toast.success("Thanh cong");
+         route.push("/")
+      }
+    
+  
+  }catch(error){
+    console.log(error)
+    toast.error("That bai");
+
+  }
+  
+     
+     
   };
 
   return (
@@ -35,16 +115,16 @@ export default function PaymentForm() {
             type="text"
             name="name"
             placeholder="Họ và tên"
-            value={formData.name}
-            onChange={handleChange}
+            value={username}
+            onChange={(e)=>{setUsername(e.target.value)}}
             className="border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-purple-600"
           />
           <input
             type="text"
             name="phone"
             placeholder="Số điện thoại"
-            value={formData.phone}
-            onChange={handleChange}
+            value={phone}
+            onChange={e=>setPhone(e.target.value)}
             className="border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-purple-600"
           />
         </div>
@@ -53,8 +133,8 @@ export default function PaymentForm() {
           name="note"
           rows="3"
           placeholder="Ghi chú"
-          value={formData.note}
-          onChange={handleChange}
+          value={note}
+          onChange={e=> setNote(e.target.value)}
           className="border border-gray-300 rounded-lg p-3 w-full focus:outline-none focus:ring-2 focus:ring-purple-600"
         />
 
@@ -63,24 +143,26 @@ export default function PaymentForm() {
           Chọn Phương Thức Thanh Toán
         </h2>
         <div className="flex flex-col gap-2 mt-2">
-          {["cash", "momo", "bank"].map((method) => (
+          {[1, 2, 3,4,5].map((method) => (
             <label key={method} className="flex items-center gap-2">
               <input
                 type="checkbox"
-                checked={paymentMethod === method}
+                checked={payId === method}
                 onChange={() => handlePaymentSelect(method)}
               />
               <span>
-                {method === "cash" && "Thanh toán tiền mặt khi đi tour"}
-                {method === "momo" && "Ví MoMo"}
-                {method === "bank" && "Chuyển khoản ngân hàng"}
+                {method === 1 && "Thanh toán tiền mặt khi đi tour"}
+                {method === 4 && "Ví MoMo"}
+                {method === 2 && "Chuyển khoản ngân hàng"}
+                {method === 3 && "Thanh toán VnPay "}
+                {method === 5 && "Thẻ tín dụng "}
               </span>
             </label>
           ))}
         </div>
 
         {/* Hiển thị thông tin chuyển khoản */}
-        {paymentMethod === "bank" && (
+        {payId === 2 && (
           <div className="bg-gray-100 border-l-4 border-purple-600 p-4 mt-4 rounded-lg">
             <h3 className="font-semibold text-purple-700 mb-1">
               Thông tin chuyển khoản
@@ -99,6 +181,7 @@ export default function PaymentForm() {
 
         {/* Nút đặt tour */}
         <button
+     
           type="submit"
           className="bg-purple-700 hover:bg-purple-800 text-white font-semibold w-full py-3 rounded-lg mt-6 transition-all"
         >

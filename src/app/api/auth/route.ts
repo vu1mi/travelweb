@@ -11,7 +11,10 @@ export async function POST(request: Request) {
   return Response.json(data, {
     status: 200,
     headers: {
-      "Set-Cookie": `sessionToken=${data.token}; Path=/ ; HttpOnly; SameSite=Strict`,
+      "Set-Cookie": [
+        `sessionToken=${data.token}; Path=/ ; HttpOnly; SameSite=Strict`,
+        `userId=${data.userId}; Path=/; SameSite=Strict`,
+      ],
     },
   });
 }

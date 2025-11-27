@@ -41,7 +41,7 @@ export default function TourCard({ tour }: TourCardProps) {
     return `${yy}/${mm}/${dd}`;
   }
   const patharray = pathname.split("/");
-  console.log("Path array:", patharray);
+  // console.log("Path array:", patharray);
 
   const handlerClick = () => {
     let pathtour: string = "";

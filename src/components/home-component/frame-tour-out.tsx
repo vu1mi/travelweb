@@ -28,7 +28,7 @@ export default function TourOut() {
         Tour Nuớc Ngoài
       </h2>
       <div className="flex gap-5 mt-12 flex-wrap">
-        {showtourout.map((tour: any) => {
+        {showtourout?.map((tour: any) => {
           return <TourCard key={tour.id} tour={tour} />;
         })}
       </div>

@@ -9,6 +9,8 @@ import { usePathname, useSearchParams } from "next/navigation";
 import { getTours } from "../../api/tours/route";
 
 const regions = [
+  { id: 1, value: "trongnuoc", label: "Trong Nước" },
+  { id: 2, value: "nuocngoai", label: "Nước Ngoài" },
   { id: 3, value: "bac", label: "Miền Bắc" },
   { id: 4, value: "trung", label: "Miền Trung" },
   { id: 5, value: "nam", label: "Miền Nam" },
@@ -20,36 +22,13 @@ const regions = [
 export default function Page() {
   const [tourshow, setTourshow] = useState<any>([]);
 
-  const {
-    tours: inTours,
-    loading: inLoading,
-    error: inError,
-    fetchTours: fetchInTours,
-  } = useInCountryStore();
-  const {
-    tours: outTours,
-    loading: outLoading,
-    error: outError,
-    fetchTours: fetchOutTours,
-  } = useOutCountryStore();
-
   const pathname = usePathname();
   const pivotfilter: string | undefined = pathname.split("/").pop();
-  console.log(pivotfilter);
+  // console.log(pivotfilter);
   const tourtypeid = regions.find((item) => item.value == pivotfilter);
   console.log("Tour Type ID:", tourtypeid?.id);
   useEffect(() => {
     async function loadTours() {
-      if (pivotfilter === "trongnuoc") {
-        setTourshow(inTours.tours);
-        return;
-      }
-
-      if (pivotfilter === "nuocngoai") {
-        setTourshow(outTours.tours);
-        return;
-      }
-
       if (tourtypeid?.id) {
         const res = await getTours(0, 4, tourtypeid.id);
         setTourshow(res.data.tours);
@@ -57,7 +36,7 @@ export default function Page() {
     }
 
     loadTours();
-  }, [pivotfilter, inTours.tours, outTours.tours, tourtypeid]);
+  }, [pivotfilter, tourtypeid]);
 
   return (
     <div className="flex  mt-6 mb-10 xl:w-[1280px] m-auto">

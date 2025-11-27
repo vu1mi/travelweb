@@ -3,6 +3,9 @@
 import { useState, useMemo } from "react";
 import { FaCalendarAlt, FaBus, FaTicketAlt } from "react-icons/fa";
 import Link from "next/link";
+import { useAppContext } from "@/app/AppProvider";
+import { toast } from "sonner";
+// import { Button } from "@/components/ui/button"
 
 type TourCardProps = {
   id: number;
@@ -21,9 +24,13 @@ type TourCardProps = {
 };
 
 type formValue = {
-  adults: number;
-  children: number;
-  babies: number;
+  tourId: number;
+  userId: number;
+  departureLocation: string;
+  locationId: number;
+  adultCount: number;
+  childCount: number;
+  infantCount: number;
 };
 type StartDate = [number, number, number];
 function formatStartDate(startDate: StartDate) {
@@ -32,7 +39,6 @@ function formatStartDate(startDate: StartDate) {
   const yy = String(year).slice(-2); // 2025 -> "25"
   const mm = String(month).padStart(2, "0"); // 1 -> "01"
   const dd = String(day).padStart(2, "0"); // 15 -> "15"
-
   return `${yy}/${mm}/${dd}`;
 }
 
@@ -40,9 +46,20 @@ export default function TourCardSumary({ data }: { data: any }) {
   const [adults, setAdults] = useState(0);
   const [children, setChildren] = useState(0);
   const [babies, setBabies] = useState(0);
+  const [daparture, setDeparture] = useState("Hà Nội");
   const tour = data;
+  const { userId } = useAppContext();
   console.log("Tour data in TourCardSumary:", data);
-
+  const valueForm: formValue = {
+    tourId: tour?.id,
+    userId: parseInt(userId),
+    departureLocation: daparture,
+    locationId: 2,
+    adultCount: adults,
+    childCount: children,
+    infantCount: babies,
+  };
+  console.log("tour id",userId)
   const total = useMemo(() => {
     return (
       adults * tour.priceAdult +
@@ -58,7 +75,40 @@ export default function TourCardSumary({ data }: { data: any }) {
     value
       .toLocaleString("vi-VN", { style: "currency", currency: "VND" })
       .replace("₫", "đ");
-  // function handleClick() {}
+  function handleBooking() {
+  
+    if (adults === 0 && children === 0 && babies === 0) {
+      toast.warning("Cần thêm số lượng khách");
+    } else {
+      async function postitem() {
+        try {
+          const result = await fetch(
+            "http://localhost:8088/api/booking-items",
+            {
+              method: "POST",
+              body: JSON.stringify(valueForm),
+              headers: {
+                "Content-Type": "application/json",
+              },
+            }
+          ).then(async (res) => {
+            const payload = await res.json();
+            if (!res.ok) {
+              throw payload;
+            }
+            toast.success("Đã thêm vào giỏ hàng");
+            console.log("payloaf bookitem", payload);
+            return payload;
+          });
+        } catch (error: any) {
+          console.log(error);
+          toast.error("Thất bại");
+        }
+      }
+
+      postitem();
+    }
+  }
   return (
     <div className="  max-w-sm bg-white rounded-2xl shadow p-5 w-[400px]">
       <h2 className="text-xl font-bold text-purple-700 mb-3">
@@ -103,6 +153,7 @@ export default function TourCardSumary({ data }: { data: any }) {
         <select
           className="w-full border rounded-lg p-2 mt-1"
           defaultValue={"ha noi"}
+          onChange={(e) => setDeparture(e.target.value)}
         >
           <option value="Hà Nội">Hà Nội</option>
           <option value="Hồ Chí Minh">Hồ Chí Minh</option>
@@ -178,14 +229,14 @@ export default function TourCardSumary({ data }: { data: any }) {
         </div>
       </div>
 
-      <Link href={"/order"}>
-        <button
-          // onClick={handleClick}
-          className="mt-4 w-full bg-purple-700 hover:bg-purple-800 text-white font-semibold py-2 rounded-lg"
-        >
-          Thêm vào giỏ hàng
-        </button>
-      </Link>
+      {/* <Link href={"/order"}> */}
+      <button
+        onClick={handleBooking}
+        className="mt-4 w-full bg-purple-700 hover:bg-purple-800 text-white font-semibold py-2 rounded-lg"
+      >
+        Thêm vào giỏ hàng
+      </button>
+      {/* </Link> */}
     </div>
   );
 }
