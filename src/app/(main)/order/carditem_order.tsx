@@ -2,7 +2,8 @@
 import Image from "next/image";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
-import {deleteItemcart} from "../api/booking_item/route"
+import {deleteItemcart} from "../../api/booking_item/route"
+import { useRouter } from "next/navigation";
 
 
 interface CartItem {
@@ -25,6 +26,7 @@ interface SummaryProps {
   onRefresh: () => Promise<void>;
 }
 export default function CardItemOrder({ data, onRefresh }: SummaryProps) {
+  const route = useRouter()
  console.log("onRefresh received:", onRefresh)
   const tour = data
   console.log(tour);
@@ -52,22 +54,17 @@ export default function CardItemOrder({ data, onRefresh }: SummaryProps) {
     console.error("Delete error:", error);
   }
   }
+
+  const routeTour=()=>{
+    route.push(`/order/${tour.tourId}`)
+  }
   return (
-    <div className="flex items-start gap-4 p-4  bg-white w-full shadow-md rounded-xl ">
-      {/* Ảnh tour */}
+    <div onClick={routeTour} className="flex items-start gap-4 p-4  bg-white w-full shadow-md rounded-xl hover:translate-[-2px] ">
       <FontAwesomeIcon
         icon={faXmark}
         onClick={deleteItem}
         className="cursor-pointer hover:scale-125 transition-all  "
       />
-      <div className="relative w-40 h-28 flex-shrink-0 overflow-hidden rounded-lg flex">
-        <Image
-          src="/blog-1.png" // đặt ảnh vào public/images
-          alt="Tour Châu Âu Đón Noel"
-          fill
-          className="object-cover"
-        />
-      </div>
 
       {/* Thông tin tour */}
       <div className="flex-1">

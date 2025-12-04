@@ -1,8 +1,9 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAppContext } from "@/app/AppProvider";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+
 export default function PaymentForm(data:any) {
   const route = useRouter();
   const { userId } = useAppContext();
@@ -78,7 +79,6 @@ export default function PaymentForm(data:any) {
                bookingId: idbooking
           })
          }
-
         ).then( async res => {
             const data = await res.json();
             window.location.href = data.paymentUrl;
@@ -86,6 +86,7 @@ export default function PaymentForm(data:any) {
 
             return data
         })
+     
       }else{
          console.log("dat tua thanh cong", result)
          toast.success("Thanh cong");
@@ -98,10 +99,23 @@ export default function PaymentForm(data:any) {
     toast.error("That bai");
 
   }
-  
-     
-     
   };
+     const params = new URLSearchParams(window.location.search);
+      const success = params.get("success");
+        if(success === "true"){
+          fetchlasttour()
+          toast.success("Thanh toán thành công")
+        }else if(success === "true"){
+           toast.error("Thanh toán thất bại ")
+        }
+
+        async function fetchlasttour(){
+          const res = await fetch(`http://localhost:8088/api/bookings/user/${userId}/all`)
+          const data = await res.json()
+      
+          const lastorderid = data[data.length - 1].id
+          
+        }
 
   return (
     <div className="bg-white p-6 rounded-2xl shadow-md max-w-3xl mx-auto mt-6">

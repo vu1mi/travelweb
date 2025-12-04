@@ -1,9 +1,9 @@
 "use client";
-import TourCardSumary from "@/app/tourdetail/[places]/[idtour]/sumarytourdetail";
+import TourCardSumary from "@/app/(main)/tourdetail/[places]/[idtour]/sumarytourdetail";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { getTourDetail } from "../../../../app/api/tours/route";
-import TourPage from "@/app/tourdetail/[places]/[idtour]/infortour";
+import TourPage from "@/app/(main)/tourdetail/[places]/[idtour]/infortour";
 
 type TourType = {
   id: number;

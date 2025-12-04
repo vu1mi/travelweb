@@ -93,7 +93,7 @@ export default function NavBarHeader() {
   const renderTourTypeLink = (tourType: TourTypeResponse) => {
     return (
       <NavigationMenuItem key={tourType.id}>
-        <Link href={getTourUrl(tourType)} legacyBehavior passHref>
+        <Link href={getTourUrl(tourType)} >
           <NavigationMenuLink className="text-base font-medium text-gray-700 hover:text-purple-600 px-4 py-2 rounded-md hover:bg-gray-50 transition-colors inline-flex items-center">
             {tourType.name}
           </NavigationMenuLink>
@@ -107,10 +107,10 @@ export default function NavBarHeader() {
       <NavigationMenu>
         <NavigationMenuList className="gap-2">
           <NavigationMenuItem>
-            <Link href="/" legacyBehavior passHref>
-              <NavigationMenuLink className="text-base font-medium text-gray-700 px-4 py-2">
+            <Link href="/" className="text-base font-medium text-gray-700 px-4 py-2" >
+              
                 Trang Chủ
-              </NavigationMenuLink>
+            
             </Link>
           </NavigationMenuItem>
           <NavigationMenuItem>
@@ -126,10 +126,8 @@ export default function NavBarHeader() {
       <NavigationMenuList className="gap-1">
         {/* Trang chủ - giữ nguyên */}
         <NavigationMenuItem>
-          <Link href="/" legacyBehavior passHref>
-            <NavigationMenuLink className="text-base font-medium text-gray-700 hover:text-purple-600 px-4 py-2 rounded-md hover:bg-gray-50 transition-colors inline-flex items-center">
+          <Link href="/" className="text-base font-medium text-gray-700 hover:text-purple-600 px-4 py-2 rounded-md hover:bg-gray-50 transition-colors inline-flex items-center">
               Trang Chủ
-            </NavigationMenuLink>
           </Link>
         </NavigationMenuItem>
 
@@ -144,20 +142,22 @@ export default function NavBarHeader() {
 
         {/* Tin tức - giữ nguyên */}
         <NavigationMenuItem>
-          <Link href="/news" legacyBehavior passHref>
-            <NavigationMenuLink className="text-base font-medium text-gray-700 hover:text-purple-600 px-4 py-2 rounded-md hover:bg-gray-50 transition-colors inline-flex items-center">
+          
+            <NavigationMenuLink asChild className="text-base font-medium text-gray-700 hover:text-purple-600 px-4 py-2 rounded-md hover:bg-gray-50 transition-colors inline-flex items-center">
+             <Link href="/news" >
               Tin tức
+              </Link>
             </NavigationMenuLink>
-          </Link>
+          
         </NavigationMenuItem>
 
         {/* Liên hệ - giữ nguyên */}
         <NavigationMenuItem>
-          <Link href="/contact" legacyBehavior passHref>
-            <NavigationMenuLink className="text-base font-medium text-gray-700 hover:text-purple-600 px-4 py-2 rounded-md hover:bg-gray-50 transition-colors inline-flex items-center">
+            <NavigationMenuLink asChild className="text-base font-medium text-gray-700 hover:text-purple-600 px-4 py-2 rounded-md hover:bg-gray-50 transition-colors inline-flex items-center">
+          <Link href="/contact" >
               Liên hệ
-            </NavigationMenuLink>
           </Link>
+            </NavigationMenuLink>
         </NavigationMenuItem>
       </NavigationMenuList>
     </NavigationMenu>

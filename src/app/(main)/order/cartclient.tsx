@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { useAppContext } from "@/app/AppProvider";
-import CartSummary from "@/app/order/cartsummary";
-import PaymentForm from "@/app/order/inforcleint";
+import CartSummary from "@/app/(main)/order/cartsummary";
+import PaymentForm from "@/app/(main)/order/inforcleint";
 
 interface CartItem {
   id: number;

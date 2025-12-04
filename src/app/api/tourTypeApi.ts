@@ -32,19 +32,19 @@ api.interceptors.request.use(
 );
 
 // Add response interceptor để handle errors
-api.interceptors.response.use(
-  (response) => {
-    console.log(`✅ API Success: ${response.config.url}`, response.data);
-    return response;
-  },
-  (error) => {
-    console.error(
-      `❌ API Error: ${error.config?.url}`,
-      error.response?.data || error.message
-    );
-    return Promise.reject(error);
-  }
-);
+// api.interceptors.response.use(
+//   (response) => {
+//     console.log(`✅ API Success: ${response.config.url}`, response.data);
+//     return response;
+//   },
+//   (error) => {
+//     console.error(
+//       `❌ API Error: ${error.config?.url}`,
+//       error.response?.data || error.message
+//     );
+//     return Promise.reject(error);
+//   }
+// );
 
 // ============== TYPES ==============
 

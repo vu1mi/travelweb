@@ -4,7 +4,7 @@ import Image from "next/image";
 
 export default function InforHeader() {
   return (
-    <div className="flex justify-center pt-[10px] pb-[10px]   bg-blue-700 p">
+    <div className="flex justify-center pt-[10px] pb-[10px]   bg-blue-700 ">
       <div className=" flex items-center justify-end xl:w-[1280px] gap-4">
         <span className="flex gap-1">
           <Image src="/phone.svg" alt="phone" width={25} height={25} />

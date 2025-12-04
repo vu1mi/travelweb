@@ -28,6 +28,7 @@ type StartDate = [number, number, number];
 export default function TourCard({ tour }: TourCardProps) {
   const router = useRouter();
   const pathname = usePathname();
+  console.log("tour detail", tour)
   if (!tour) {
     return;
   }
@@ -58,7 +59,7 @@ export default function TourCard({ tour }: TourCardProps) {
   return (
     <div
       onClick={handlerClick}
-      className="w-[300px] bg-white rounded-xl overflow-hidden shadow hover:shadow-lg  transition-all duration-300
+      className="w-[300px] max-h-[500px] bg-white rounded-xl overflow-hidden shadow hover:shadow-lg  transition-all duration-300
             hover:scale-[1.01] hover:-translate-y-2  transition p-3 flex flex-col cursor-pointer"
     >
       {/* Image */}
@@ -77,8 +78,10 @@ export default function TourCard({ tour }: TourCardProps) {
 
       {/* Prices */}
       <div className="mt-2 flex items-center gap-2">
-        {/* <span className="line-through text-gray-400">13.650.000đ</span> */}
-        <span className="text-red-600 font-bold">{tour?.discountedPrice}đ</span>
+        <span className={`${tour?.discountPercent}? "line-through":"" text-blue-500`}>{tour?.originalPrice.toLocaleString()}đ</span>
+        {tour?.discountPercent?
+        <span className="text-red-600 font-bold">{tour?.discountedPrice}đ</span>:""
+        }
         <span className="text-gray-600 font-[600]">/Khách</span>
       </div>
 

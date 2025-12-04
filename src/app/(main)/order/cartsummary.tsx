@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import {  useMemo} from "react";
-import CardItemOrder from "@/app/order/carditem_order";
+import {  useMemo, useState} from "react";
+import CardItemOrder from "@/app/(main)/order/carditem_order";
 
 interface CartItem {
   id: number;
@@ -24,8 +24,8 @@ interface SummaryProps {
 }
 
 export default function CartSummary( { data, onRefresh }: SummaryProps) {
-  const discount = 0;
-  // const list = data ?? [];
+  const [discount,setDiscount] = useState<number>(0)
+  const [discountcode,setDiscountCode] = useState<string>()
 
   console.log("log data", data);
   console.log("log re", onRefresh);
@@ -36,8 +36,14 @@ export default function CartSummary( { data, onRefresh }: SummaryProps) {
     );
   }, [data]);
   const finaltotal = useMemo(() => {
-    return total - discount;
+    return total*(1-discount)
   }, [total, discount]);
+
+  const hadlediscount =()=>{
+      if(discountcode==="anhvudeptrai"){
+       setDiscount(0.4)
+      }
+  }
 
   return (
     <div className="max-w-5xl mx-auto bg-white p-6 rounded-2xl shadow-sm mt-6 ">
@@ -67,11 +73,12 @@ export default function CartSummary( { data, onRefresh }: SummaryProps) {
         <input
           type="text"
           placeholder="Nhập mã giảm giá"
-          // onChange={(e) => setDiscountCode(e.target.value)}
+          value={discountcode}
+          onChange={(e) => setDiscountCode(e.target.value)}
           className="flex-1 border rounded-lg px-4 py-2 outline-none focus:border-purple-500"
         />
         <button
-          // onClick={}
+          onClick={hadlediscount}
           className="bg-purple-700 hover:bg-purple-800 text-white px-6 py-2 rounded-lg font-medium"
         >
           Nhập mã
@@ -87,7 +94,7 @@ export default function CartSummary( { data, onRefresh }: SummaryProps) {
         <div className="flex justify-between">
           <span>Giảm:</span>
           <span className="text-red-600">
-            -{discount.toLocaleString("vi-VN")} đ
+            -{discount*100}%
           </span>
         </div>
         <div className="flex justify-between font-bold text-lg text-purple-700 mt-2">

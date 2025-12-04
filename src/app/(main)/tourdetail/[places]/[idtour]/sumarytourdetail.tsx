@@ -110,7 +110,7 @@ export default function TourCardSumary({ data }: { data: any }) {
     }
   }
   return (
-    <div className="  max-w-sm bg-white rounded-2xl shadow p-5 w-[400px]">
+    <div className="  max-w-sm bg-white rounded-2xl shadow p-5 w-[400px] mt-6">
       <h2 className="text-xl font-bold text-purple-700 mb-3">
         Chuyến Đi Của Bạn
       </h2>

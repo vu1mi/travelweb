@@ -45,13 +45,15 @@ export default function TourPage({ data }: { data: any }) {
       <Card>
         <CardContent className="space-y-4 p-4">
           <h2 className="text-xl font-bold text-blue-700">Thông Tin Tour</h2>
-          <p>
+          {/* <p>
             Nếu bạn đang tìm kiếm một hành trình vừa có cảnh sắc thiên nhiên
             hùng vĩ, vừa có nét cổ kính của văn hóa, thì tour du lịch Hạ Long –
             Hà Nội chính là lựa chọn hoàn hảo. Tour mang đến cho bạn trải nghiệm
             du ngoạn trên vịnh Hạ Long, khám phá các hang động kỳ ảo và thưởng
             thức đặc sản vùng miền.
-          </p>
+          </p> */}
+          
+          {data.tourDetail}
 
           <img
             src="https://e.khoahoc.tv/photos/image/2024/01/22/thap-rua-2.jpg"

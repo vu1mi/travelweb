@@ -5,7 +5,8 @@ import Link from "next/link";
 
 export default function Headers() {
   return (
-    <div className=" flex justify-center  pt-[20px] pb-[20px]  bg-white  shadow-md">
+    <div className=" flex justify-center  pt-[20px] pb-[20px] w-full bg-white  shadow-md sticky top-0
+left-0 z-10">
       <div className=" flex items-center justify-between xl:w-[1280px]">
         {/* dang ki dang nhap */}
         <div>

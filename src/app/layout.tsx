@@ -4,14 +4,12 @@ import ThemeProvider from "@/components/theme-provider";
 import { Inter } from "next/font/google";
 import Headers from "@/components/header";
 import InforHeader from "@/components/home-component/infor-header";
-import Link from "next/link";
 import Footer from "@/components/footer";
 import { Toaster } from "sonner";
 import AppProvider from "@/app/AppProvider";
 import { cookies } from "next/headers";
 import HeaderLogin from "@/components/heade-login";
 import ChatBotWidget from "@/components/chatbotai/chatbotcompoent";
-import { headers } from "next/headers";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -45,18 +43,14 @@ export default async function RootLayout({
           disableTransitionOnChange
         >
           <Toaster richColors />
- 
-
           <AppProvider
             inittialToken={sessionToken?.value}
             inittialUserId={userId?.value}
           >
-              <InforHeader />
-          {sessionToken?.value ? <HeaderLogin /> : <Headers />}
+   
             {children}
           </AppProvider>
-          <ChatBotWidget />
-          <Footer />
+     
         </ThemeProvider>
       </body>
     </html>

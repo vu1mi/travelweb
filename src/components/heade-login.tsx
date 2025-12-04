@@ -9,7 +9,8 @@ import IconCard from "@/components/icon-cart";
 export default function HeaderLogin() {
   
   return (
-    <div className=" flex justify-center  pt-[20px] pb-[20px]  bg-white  shadow-md">
+    <div className=" flex justify-center  pt-[20px] pb-[20px]  bg-white  shadow-md sticky top-0
+left-0 z-10">
       <div className=" flex items-center justify-between xl:w-[1280px]">
         {/* dang ki dang nhap */}
         <div>
@@ -20,7 +21,7 @@ export default function HeaderLogin() {
           <Link href={"/order"}>
             <IconCard  />
           </Link>
-          <Link href={"/"} className="ml-8">
+          <Link href={"/profile"} className="ml-8">
             <Avatar className="border-3 w-{24px} h-{24px}">
               <AvatarImage src="" />
               <AvatarFallback>PV</AvatarFallback>
