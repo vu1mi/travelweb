@@ -145,7 +145,7 @@ export default function Search() {
               <SelectValue placeholder="Ngân sách" className="h-[60px]" />
             </SelectTrigger>
             <SelectContent>
-              <SelectGroup>
+              <SelectGroup className="bg-white text-black color-white border-none">
                 <SelectLabel>Mức giá</SelectLabel>
                 <SelectItem value="0 10000000">Dưới 10 triệu</SelectItem>
                 <SelectItem value="10000000 20000000">

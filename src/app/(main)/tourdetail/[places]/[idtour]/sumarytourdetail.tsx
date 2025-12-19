@@ -5,6 +5,7 @@ import { FaCalendarAlt, FaBus, FaTicketAlt } from "react-icons/fa";
 import Link from "next/link";
 import { useAppContext } from "@/app/AppProvider";
 import { toast } from "sonner";
+import {getImageUrl} from "@/app/utils/imageUrl"
 // import { Button } from "@/components/ui/button"
 
 type TourCardProps = {
@@ -116,7 +117,7 @@ export default function TourCardSumary({ data }: { data: any }) {
       </h2>
 
       <img
-        src={tour.images[0]}
+        src={getImageUrl(tour.images[0])}
         alt={tour.name}
         className="rounded-lg w-full mb-3"
       />
