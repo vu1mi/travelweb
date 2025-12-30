@@ -32,19 +32,21 @@ export default function TourIn() {
   //   setShow((prevShow) => !prevShow);
   // };
   return (
-    <div className="xl:w-[1280px] m-auto mt-30">
-      <h2 className="text-4xl text-[#4502c7] font-bold text-center">
+    <div className="max-w-7xl mx-auto mt-20 px-4 sm:px-6 lg:px-8">
+      <h2 className="text-2xl sm:text-3xl lg:text-4xl text-[#4502c7] font-bold text-center">
         Tour Trong Nước
       </h2>
-      <div className="flex gap-5 mt-12 flex-wrap">
+      <div className="flex gap-3 lg:gap-5 mt-8 lg:mt-12 flex justify-center">
         {showtourin?.map((tour: any) => {
           return <TourCard key={tour.id} tour={tour} />;
         })}
       </div>
 
-      <button className="text-blue-600 p-3 border-2 rounded-md border-blue-600 mt-10 mx-auto flex hover:bg-blue-600 hover:text-white transition">
-        <Link href={"/tourdetail/trongnuoc"}> Xem thêm</Link>
-      </button>
+      <div className="text-center mt-8 lg:mt-10">
+        <button className="text-blue-600 p-3 border-2 rounded-md border-blue-600 hover:bg-blue-600 hover:text-white transition-colors">
+          <Link href={"/tourdetail/trongnuoc"}> Xem thêm</Link>
+        </button>
+      </div>
     </div>
   );
 }

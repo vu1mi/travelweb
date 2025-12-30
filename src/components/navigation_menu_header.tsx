@@ -123,10 +123,10 @@ export default function NavBarHeader() {
 
   return (
     <NavigationMenu>
-      <NavigationMenuList className="gap-1">
+      <NavigationMenuList className="hidden md:flex gap-1">
         {/* Trang chủ - giữ nguyên */}
         <NavigationMenuItem>
-          <Link href="/" className="text-base font-medium text-gray-700 hover:text-purple-600 px-4 py-2 rounded-md hover:bg-gray-50 transition-colors inline-flex items-center">
+          <Link href="/" className="text-sm lg:text-base font-medium text-gray-700 hover:text-purple-600 px-2 lg:px-4 py-2 rounded-md hover:bg-gray-50 transition-colors inline-flex items-center">
               Trang Chủ
           </Link>
         </NavigationMenuItem>
@@ -143,7 +143,7 @@ export default function NavBarHeader() {
         {/* Tin tức - giữ nguyên */}
         <NavigationMenuItem>
           
-            <NavigationMenuLink asChild className="text-base font-medium text-gray-700 hover:text-purple-600 px-4 py-2 rounded-md hover:bg-gray-50 transition-colors inline-flex items-center">
+            <NavigationMenuLink asChild className="text-sm lg:text-base font-medium text-gray-700 hover:text-purple-600 px-2 lg:px-4 py-2 rounded-md hover:bg-gray-50 transition-colors inline-flex items-center">
              <Link href="/news" >
               Tin tức
               </Link>
@@ -153,13 +153,41 @@ export default function NavBarHeader() {
 
         {/* Liên hệ - giữ nguyên */}
         <NavigationMenuItem>
-            <NavigationMenuLink asChild className="text-base font-medium text-gray-700 hover:text-purple-600 px-4 py-2 rounded-md hover:bg-gray-50 transition-colors inline-flex items-center">
+            <NavigationMenuLink asChild className="text-sm lg:text-base font-medium text-gray-700 hover:text-purple-600 px-2 lg:px-4 py-2 rounded-md hover:bg-gray-50 transition-colors inline-flex items-center">
           <Link href="/contact" >
               Liên hệ
           </Link>
             </NavigationMenuLink>
         </NavigationMenuItem>
       </NavigationMenuList>
+      {/* Mobile navigation */}
+      <div className="md:hidden flex flex-col space-y-2">
+        <Link href="/" className="text-base font-medium text-gray-700 hover:text-purple-600 px-4 py-2 rounded-md hover:bg-gray-50 transition-colors">
+          Trang Chủ
+        </Link>
+        {tourTypes.map((tourType) => (
+          <div key={tourType.id} className="flex flex-col space-y-1">
+            <Link href={getTourUrl(tourType)} className="text-base font-medium text-gray-700 hover:text-purple-600 px-4 py-2 rounded-md hover:bg-gray-50 transition-colors">
+              {tourType.name}
+            </Link>
+            {tourType.children?.map((child) => (
+              <Link
+                key={child.id}
+                href={getTourUrl(child)}
+                className="text-sm text-gray-600 hover:text-purple-600 px-6 py-1 rounded-md hover:bg-gray-50 transition-colors ml-4"
+              >
+                {child.name}
+              </Link>
+            ))}
+          </div>
+        ))}
+        <Link href="/news" className="text-base font-medium text-gray-700 hover:text-purple-600 px-4 py-2 rounded-md hover:bg-gray-50 transition-colors">
+          Tin tức
+        </Link>
+        <Link href="/contact" className="text-base font-medium text-gray-700 hover:text-purple-600 px-4 py-2 rounded-md hover:bg-gray-50 transition-colors">
+          Liên hệ
+        </Link>
+      </div>
     </NavigationMenu>
   );
 }

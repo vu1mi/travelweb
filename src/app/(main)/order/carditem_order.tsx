@@ -58,6 +58,7 @@ export default function CardItemOrder({ data, onRefresh }: SummaryProps) {
   const routeTour=()=>{
     route.push(`/order/${tour.tourId}`)
   }
+  console.log("tour in card item", tour)
   return (
     <div onClick={routeTour} className="flex items-start gap-4 p-4  bg-white w-full shadow-md rounded-xl hover:translate-[-2px] ">
       <FontAwesomeIcon

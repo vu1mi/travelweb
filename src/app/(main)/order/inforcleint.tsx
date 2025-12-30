@@ -117,6 +117,7 @@ export default function PaymentForm(data:any) {
           
         }
 
+
   return (
     <div className="bg-white p-6 rounded-2xl shadow-md max-w-3xl mx-auto mt-6">
       {/* Thông tin khách hàng */}

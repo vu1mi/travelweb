@@ -44,3 +44,29 @@ export const normalizePath = (path: string) => {
 export const decodeJWT = <Payload = any>(token: string) => {
   return jwt.decode(token) as Payload;
 };
+export const formatDate = (dateArray: [number, number, number, number, number, number] | string | null | undefined): string => {
+  if (!dateArray) {
+    return "";
+  }
+
+  // Nếu là string, convert to date
+  if (typeof dateArray === "string") {
+    const date = new Date(dateArray);
+    const dayStr = String(date.getDate()).padStart(2, "0");
+    const monthStr = String(date.getMonth() + 1).padStart(2, "0");
+    return `${dayStr}/${monthStr}/${date.getFullYear()}`;
+  }
+
+  // Nếu không phải array, trả về empty
+  if (!Array.isArray(dateArray)) {
+    return "";
+  }
+
+  const [year, month, day] = dateArray;
+  const dayStr = String(day).padStart(2, "0");
+  const monthStr = String(month).padStart(2, "0");
+  return `${dayStr}/${monthStr}/${year}`;
+};
+export const handleImg = (enpoint:string)=>{
+ return `http://localhost:8088/api/tours/images/${enpoint}`;
+}

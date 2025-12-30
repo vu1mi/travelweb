@@ -15,21 +15,25 @@ export default function Home() {
       <LayoutSearch />
       <SliceVoucher />
       <TourIn />
-      <Image
-        src={"/banner-4.png"}
-        alt="Banner-4"
-        width={1280}
-        height={500}
-        className="object-cover m-auto mt-20"
-      />
+      <div className="mt-16 lg:mt-20 flex justify-center px-4">
+        <Image
+          src={"/banner-4.png"}
+          alt="Banner-4"
+          width={1280}
+          height={500}
+          className="object-cover w-full max-w-4xl h-auto rounded-lg"
+        />
+      </div>
       <TourOut />
-      <Image
-        src={"/banner-5.png"}
-        alt="Banner-4"
-        width={1280}
-        height={500}
-        className="object-cover m-auto mt-20"
-      />
+      <div className="mt-16 lg:mt-20 flex justify-center px-4">
+        <Image
+          src={"/banner-5.png"}
+          alt="Banner-5"
+          width={1280}
+          height={500}
+          className="object-cover w-full max-w-4xl h-auto rounded-lg"
+        />
+      </div>
       <NewInfor />
     </>
   );
