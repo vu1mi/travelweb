@@ -5,5 +5,12 @@ export default function AuthLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <div className="h-screen bg-color-auth">{children}</div>;
+ return (
+  <div
+    className="h-screen bg-cover bg-center"
+    style={{ backgroundImage: "url('/banner-detail.jpg')" }}
+  >
+    {children}
+  </div>
+);
 }

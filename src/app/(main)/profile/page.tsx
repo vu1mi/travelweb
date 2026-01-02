@@ -327,18 +327,19 @@ const MyTours = ( {tourorder}:MyToursProps) => {
         return `${date[0]}/${date[1]}${date[2]} ${date[3]}:${date[4]}:${date[5]}`
     }
     console.log("id",idorder)
+    console.log('order', tourorder)
     const Subitem = ({ touritem }: SubitemProps)=>{
 
       const format =(arr:number[])=>{
         return `${arr[2]}/${arr[1]}/${arr[0]}`
       }
-      const routetour=()=>{
-        route.push(`profile/${touritem.tourId}`)
-      }
+      // const routetour=()=>{
+      //   route.push(`profile/${touritem.tourId}`)
+      // }
 
       return (
          <div
-         onClick={routetour}
+        //  onClick={routetour}
          className='flex  justify-between border p-5 rounded-xl shadow-md hover:shadow-lg transform hover:-translate-y-1 transition 
             duration-200 ease-out gap-5'>
         <div className='flex flex-col justify-between'>
@@ -351,7 +352,8 @@ const MyTours = ( {tourorder}:MyToursProps) => {
           <span>Trẻ sơ sinh: {touritem?.infantCount}</span>
           <span className='text-blue-700 font-bold'>Tổng tiền: {touritem?.subTotal.toLocaleString('vi-VN')}đ</span>
         </div>
-        <RatingModel/>
+       { touritem.status === 2 ?<RatingModel/>:''}
+        
         </div>
         )
     }

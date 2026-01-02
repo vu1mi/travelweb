@@ -3,10 +3,9 @@ import { useEffect, useState } from "react";
 import { useAppContext } from "@/app/AppProvider";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-
 export default function PaymentForm(data:any) {
   const route = useRouter();
-  const { userId } = useAppContext();
+  const { userId, sessionToken } = useAppContext();
   const [username , setUsername] = useState('')
   const [phone , setPhone] = useState('')
   const [payId , setPayId] = useState(0)
@@ -32,6 +31,7 @@ export default function PaymentForm(data:any) {
 
   const handleSubmit = async  (e:React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    console.log("Submitting form with data:", formData);
    
      if (!username.trim()) {
       toast.warning("Tên không được để trống");
@@ -59,8 +59,11 @@ export default function PaymentForm(data:any) {
   
       const res = await fetch(`http://localhost:8088/api/bookings/${idbooking}`,
         {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
+    method: "PATCH",
+    headers: { "Content-Type": "application/json",
+       Authorization: `Bearer ${sessionToken}`,
+
+     },
     body: JSON.stringify(formData)
   }
       ) 
@@ -73,7 +76,8 @@ export default function PaymentForm(data:any) {
           {
              method: "POST",
              headers: {
-             "Content-Type": "application/json"
+             "Content-Type": "application/json",
+              Authorization: `Bearer ${sessionToken}`,
                   },
                body: JSON.stringify({
                bookingId: idbooking

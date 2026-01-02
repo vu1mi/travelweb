@@ -3,6 +3,8 @@
 import Link from "next/link";
 import {  useMemo, useState} from "react";
 import CardItemOrder from "@/app/(main)/order/carditem_order";
+import { set } from "zod";
+import { toast } from "sonner";
 
 interface CartItem {
   id: number;
@@ -21,28 +23,55 @@ interface CartItem {
 interface SummaryProps {
   data: CartItem[] | null;
   onRefresh: () => Promise<void>;
+  bookingid?: number;
 }
 
-export default function CartSummary( { data, onRefresh }: SummaryProps) {
+export default function CartSummary( { data, onRefresh,bookingid }: SummaryProps) {
   const [discount,setDiscount] = useState<number>(0)
   const [discountcode,setDiscountCode] = useState<string>()
+  const [discountType,setDiscountType] = useState<string>("")
 
-  console.log("log data", data);
-  console.log("log re", onRefresh);
 
   const total = useMemo(() => {
     return (
-      data?.reduce((sum: number, item: CartItem) => sum + item.subTotal, 0) ?? 0
+      data?.reduce((sum: number, item: CartItem) => sum + item.subTotal, 0) ?? 0 
     );
   }, [data]);
   const finaltotal = useMemo(() => {
-    return total*(1-discount)
+    switch (discountType) {
+      case "PERCENTAGE":
+        return total - total * (discount / 100)
+      case "FIXED_AMOUNT":
+        return total - discount
+      default:
+        return total
+    }
   }, [total, discount]);
 
-  const hadlediscount =()=>{
-      if(discountcode==="anhvudeptrai"){
-       setDiscount(0.4)
-      }
+      
+
+
+  const hadlediscount = async()=>{
+    try{ const data = await fetch(`http://localhost:8088/api/vouchers/bookings/${bookingid}/apply-voucher`,{
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({voucherCode:discountcode})
+     });
+     
+     const json = await data.json();
+     if(!data.ok){
+       setDiscountType('')
+     setDiscount(0)
+      throw new Error(json.error);
+      
+     }
+     setDiscountType(json.voucher.discountType)
+     setDiscount(json.voucher.discountValue)
+     console.log("discount",json.voucher.discountType)
+    }catch(error){
+      toast.error(error?.message)
+    }
+    
   }
 
   return (
@@ -94,7 +123,7 @@ export default function CartSummary( { data, onRefresh }: SummaryProps) {
         <div className="flex justify-between">
           <span>Giảm:</span>
           <span className="text-red-600">
-            -{discount*100}%
+            -{discountType === 'PERCENTAGE' ? discount : discountType === 'FIXED_AMOUNT' ? discount : 0} {discountType === 'PERCENTAGE' ? '%' : discountType === 'FIXED_AMOUNT' ? 'đ' : ''}
           </span>
         </div>
         <div className="flex justify-between font-bold text-lg text-purple-700 mt-2">

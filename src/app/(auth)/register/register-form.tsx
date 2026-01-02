@@ -100,7 +100,7 @@ export default function RegisterForm() {
   }
 
   return (
-    <div className="w-full flex justify-center items-center">
+    <div className="w-full flex justify-center items-center  ">
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onsubmit)}

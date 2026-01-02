@@ -1,9 +1,10 @@
 "use client";
 import "./chabot.css";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, use } from "react";
 import { MessageCircle, Send } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { getAIResponse } from "@/app/api/chatbot/route";
+import { getResponseAi } from "@/app/api/chatbot/route";
+import {useAppContext} from "@/app/AppProvider";
 
 export default function ChatBotWidget() {
   const [loading, setLoading] = useState(false);
@@ -13,6 +14,7 @@ export default function ChatBotWidget() {
   );
   const [input, setInput] = useState("");
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  const {userId} = useAppContext();
 
   useEffect(() => {
     if (messagesEndRef.current) {
@@ -29,8 +31,8 @@ export default function ChatBotWidget() {
     setInput("");
 
     try {
-      const response = await getAIResponse(userText);
-      const answer = response.answer || "Bot không trả lời được.";
+      const response = await getResponseAi(userText,userId ,undefined)
+      const answer = response.message || "Bot không trả lời được.";
 
       setMessages((prev) => [...prev, { from: "bot", text: answer }]);
     } catch (error) {
@@ -45,7 +47,7 @@ export default function ChatBotWidget() {
   }
 
   return (
-    <div className="fixed bottom-6 right-6 z-50">
+    <div className="fixed bottom-2 right-6 z-50">
       <AnimatePresence>
         {isOpen && (
           <motion.div

@@ -48,7 +48,7 @@ export default function CartClient() {
   return (
     <>
    
-        <CartSummary data={items} onRefresh={loadData}/>
+        <CartSummary data={items} bookingid={data?.id} onRefresh={loadData}/>
       <PaymentForm data={data} />
 
      
