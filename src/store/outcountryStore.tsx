@@ -24,7 +24,6 @@ export const useOutCountryStore = create<TourStore>()(
 
           // const data: TourDetailResponse[] = res.data;
           set({ tours: res.data, loading: false });
-          console.log("Fetched tours:", res.data);
         } catch (err) {
           const message =
             err instanceof Error ? err.message : "Đã xảy ra lỗi không xác định";

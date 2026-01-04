@@ -25,10 +25,20 @@ import { useRouter } from "next/navigation";
 import path from "path";
 type StartDate = [number, number, number];
 
+const getImageUrl = (raw?: string | null) => {
+  if (!raw) return "";
+  // Nếu đã là URL đầy đủ (dùng cho mấy tour seed link từ GG Image)
+  if (raw.startsWith("http://") || raw.startsWith("https://")) {
+    return raw;
+  }
+  // Còn lại coi là filename trong thư mục uploads trên backend
+  return `http://localhost:8088/api/tours/images/${raw}`;
+};
+
+
 export default function TourCard({ tour }: TourCardProps) {
   const router = useRouter();
   const pathname = usePathname();
-  console.log("tour detail", tour)
   if (!tour) {
     return;
   }
@@ -42,7 +52,7 @@ export default function TourCard({ tour }: TourCardProps) {
     return `${yy}/${mm}/${dd}`;
   }
   const patharray = pathname.split("/");
-  // console.log("Path array:", patharray);
+
 
   const handlerClick = () => {
     let pathtour: string = "";
@@ -51,10 +61,8 @@ export default function TourCard({ tour }: TourCardProps) {
     } else {
       pathtour = `${pathname}/${tour.id}`;
     }
-    console.log("Path tour detail:", pathtour);
 
     router.push(pathtour);
-    console.log("Tour ID:", pathname);
   };
   return (
     <div

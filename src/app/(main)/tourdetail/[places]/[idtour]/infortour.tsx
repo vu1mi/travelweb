@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {handleImg} from "@/lib/utils";
@@ -74,7 +74,10 @@ export default function TourPage({ data }: { data: any }) {
                 <h3 className="text-lg font-semibold text-purple-700">
                   Ngày {index + 1}: {schedule.title}
                 </h3>
-                <p>{schedule.description}</p>
+                <div
+      dangerouslySetInnerHTML={{ __html: schedule.description }}
+    />
+              
                 {/* <img
                   src="https://upload.wikimedia.org/wikipedia/commons/2/20/Ho_Chi_Minh_Mausoleum.jpg"
                   alt="Lăng Chủ tịch Hồ Chí Minh"

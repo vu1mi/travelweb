@@ -13,7 +13,6 @@ export default function TourOut() {
   }, []);
 
   const showtourout = tours.tours;
-  console.log("Tour trong nuoc:", showtourout);
 
   if (loading) {
     <Loading />;

@@ -62,6 +62,7 @@ export default function RegisterForm() {
       if (!res.ok) {
         throw new Error(`Register failed: ${res.status}`);
       }
+      toast.success("Đăng kí thành công");
 
       // 3️⃣ Lấy userId từ payload
       const userId = payload?.id || payload?.userId;

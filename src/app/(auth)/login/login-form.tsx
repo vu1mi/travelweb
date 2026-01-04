@@ -74,8 +74,9 @@ export default function LoginForm() {
         return payload;
       });
       console.log("resultFromNextSever", resultFromNextSever);
-      router.push("/");
+      router.push("/home");
       router.refresh();
+      console.log("Login successful, redirected to /home");
     } catch (error: any) {
       console.log(error);
       toast.error("Mật khẩu hoặc email chưa đúng");

@@ -22,7 +22,7 @@ export default function PaymentForm(data:any) {
     status:1,
     note: note
   };
-
+  const codevoucher =  localStorage.getItem("voucherid")
 
 
   const handlePaymentSelect =  (method:number) => {
@@ -56,6 +56,19 @@ export default function PaymentForm(data:any) {
     return;
   }
   try{
+    const resvoucher = await fetch(`http://localhost:8088/api/vouchers/bookings/${idbooking}/apply-voucher`,{
+      method: "POST",
+      headers: { "Content-Type": "application/json",
+        "Authorization": `Bearer ${sessionToken}`
+       },
+       body: JSON.stringify({
+        voucherCode: codevoucher
+   }),
+     });
+     if(!resvoucher.ok){
+      throw new Error("Áp dụng voucher thất bại");
+     }
+     localStorage.removeItem("voucherid");
   
       const res = await fetch(`http://localhost:8088/api/bookings/${idbooking}`,
         {

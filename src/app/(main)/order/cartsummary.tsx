@@ -3,8 +3,8 @@
 import Link from "next/link";
 import {  useMemo, useState} from "react";
 import CardItemOrder from "@/app/(main)/order/carditem_order";
-import { set } from "zod";
 import { toast } from "sonner";
+import { useAppContext } from "@/app/AppProvider";
 
 interface CartItem {
   id: number;
@@ -30,6 +30,7 @@ export default function CartSummary( { data, onRefresh,bookingid }: SummaryProps
   const [discount,setDiscount] = useState<number>(0)
   const [discountcode,setDiscountCode] = useState<string>()
   const [discountType,setDiscountType] = useState<string>("")
+  const { sessionToken } = useAppContext();
 
 
   const total = useMemo(() => {
@@ -52,25 +53,30 @@ export default function CartSummary( { data, onRefresh,bookingid }: SummaryProps
 
 
   const hadlediscount = async()=>{
-    try{ const data = await fetch(`http://localhost:8088/api/vouchers/bookings/${bookingid}/apply-voucher`,{
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({voucherCode:discountcode})
+    try{ const data = await fetch(`http://localhost:8088/api/vouchers/${discountcode}`,{
+    
+      headers: { "Content-Type": "application/json",
+        "Authorization": `Bearer ${sessionToken}`
+       },
      });
      
      const json = await data.json();
+     console.log("json",json)
      if(!data.ok){
        setDiscountType('')
      setDiscount(0)
       throw new Error(json.error);
       
      }
-     setDiscountType(json.voucher.discountType)
-     setDiscount(json.voucher.discountValue)
-     console.log("discount",json.voucher.discountType)
+     setDiscountType(json.discountType)
+     setDiscount(json.discountValue)
+     console.log("discount",json.discountType)
+     localStorage.setItem("voucherid", `${discountcode}`);
+
     }catch(error){
       toast.error(error?.message)
     }
+    
     
   }
 

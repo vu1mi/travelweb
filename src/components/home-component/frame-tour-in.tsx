@@ -14,22 +14,10 @@ export default function TourIn() {
   }, []);
 
   const showtourin = tours.tours;
-  console.log("Tour trong nuoc:", showtourin);
 
   if (loading) {
     <Loading />;
   }
-
-  // useEffect(() => {
-  //   if (show) {
-  //     setshowtourIn(tourin);
-  //   } else {
-  //     setshowtourIn(tourin.length > 5 ? tourin.slice(0, 4) : tourin);
-  //   }
-  // }, [tourin, show]);
-
-  // const showTour = () => {
-  //   setShow((prevShow) => !prevShow);
   // };
   return (
     <div className="max-w-7xl mx-auto mt-20 px-4 sm:px-6 lg:px-8">

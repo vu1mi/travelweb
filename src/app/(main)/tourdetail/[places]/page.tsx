@@ -62,7 +62,7 @@ export default function Page() {
           <div className="loader"></div>
         </div>
         )}
-      </div>y
+      </div>
     </div>
   );
 }
