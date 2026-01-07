@@ -28,7 +28,7 @@ type StartDate = [number, number, number];
 export default function TourCard({ tour }: TourCardProps) {
   const router = useRouter();
   const pathname = usePathname();
-  console.log("tour detail", tour)
+  console.log("tour detail", tour);
   if (!tour) {
     return;
   }
@@ -64,7 +64,11 @@ export default function TourCard({ tour }: TourCardProps) {
     >
       {/* Image */}
       <div className="relative w-full h-[200px] rounded-lg overflow-hidden">
-        <img src={tour?.imageUrl} alt="tour" className="object-cover" />
+        <img
+          src={`http://localhost:8088/api/tours/images/${tour?.imageUrl}`}
+          alt="tour"
+          className="object-cover"
+        />
         <div className="absolute top-2 left-2 bg-red-600 text-white text-sm px-3 py-1 rounded-full flex items-center gap-1">
           <span>⚡</span> Giảm -{tour?.discountPercent}%
         </div>
@@ -78,10 +82,18 @@ export default function TourCard({ tour }: TourCardProps) {
 
       {/* Prices */}
       <div className="mt-2 flex items-center gap-2">
-        <span className={`${tour?.discountPercent}? "line-through":"" text-blue-500`}>{tour?.originalPrice.toLocaleString()}đ</span>
-        {tour?.discountPercent?
-        <span className="text-red-600 font-bold">{tour?.discountedPrice}đ</span>:""
-        }
+        <span
+          className={`${tour?.discountPercent}? "line-through":"" text-blue-500`}
+        >
+          {tour?.originalPrice.toLocaleString()}đ
+        </span>
+        {tour?.discountPercent ? (
+          <span className="text-red-600 font-bold">
+            {tour?.discountedPrice}đ
+          </span>
+        ) : (
+          ""
+        )}
         <span className="text-gray-600 font-[600]">/Khách</span>
       </div>
 

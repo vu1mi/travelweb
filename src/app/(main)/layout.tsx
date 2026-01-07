@@ -4,6 +4,7 @@ import Footer from "@/components/footer";
 import HeaderLogin from "@/components/heade-login";
 import ChatBotWidget from "@/components/chatbotai/chatbotcompoent";
 import { cookies } from "next/headers";
+import { WebsiteSettingsProvider } from "@/app/WebsiteSettingsProvider";
 
 export const metadata = {
   title: "Trang chủ",
@@ -19,12 +20,12 @@ export default async function MainLayout({
   const sessionToken = cookieStore.get("sessionToken");
 
   return (
-    <>
+    <WebsiteSettingsProvider>
       <InforHeader />
       {sessionToken?.value ? <HeaderLogin /> : <Headers />}
       {children}
       <ChatBotWidget />
       <Footer />
-    </>
+    </WebsiteSettingsProvider>
   );
 }

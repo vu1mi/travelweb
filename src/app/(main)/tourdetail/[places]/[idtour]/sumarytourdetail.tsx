@@ -59,7 +59,7 @@ export default function TourCardSumary({ data }: { data: any }) {
     childCount: children,
     infantCount: babies,
   };
-  console.log("tour id",userId)
+  console.log("tour id", userId);
   const total = useMemo(() => {
     return (
       adults * tour.priceAdult +
@@ -76,7 +76,6 @@ export default function TourCardSumary({ data }: { data: any }) {
       .toLocaleString("vi-VN", { style: "currency", currency: "VND" })
       .replace("₫", "đ");
   function handleBooking() {
-  
     if (adults === 0 && children === 0 && babies === 0) {
       toast.warning("Cần thêm số lượng khách");
     } else {
@@ -116,7 +115,7 @@ export default function TourCardSumary({ data }: { data: any }) {
       </h2>
 
       <img
-        src={tour.images[0]}
+        src={`http://localhost:8088/api/tours/images/${tour?.avatar}`}
         alt={tour.name}
         className="rounded-lg w-full mb-3"
       />
