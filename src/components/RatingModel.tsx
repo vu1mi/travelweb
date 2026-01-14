@@ -1,10 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 // Simple Star Rating Modal
-const SimpleRatingModal = ({ isOpen, onClose, onSubmit }:any) => {
-  const [rating, setRating] = useState(0);
+const SimpleRatingModal = ({ isOpen, onClose, onSubmit, initialRating, isUpdate }:any) => {
+  const [rating, setRating] = useState(initialRating || 0);
   const [hover, setHover] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (isOpen) {
+      setRating(initialRating || 0);
+    }
+  }, [isOpen, initialRating]);
 
   const handleSubmit = async () => {
     if (rating === 0) {
@@ -15,8 +21,6 @@ const SimpleRatingModal = ({ isOpen, onClose, onSubmit }:any) => {
     setIsSubmitting(true);
     try {
       await onSubmit(rating);
-      setRating(0);
-      setHover(0);
       onClose();
     } catch (err) {
       alert('Không thể gửi đánh giá');
@@ -32,7 +36,9 @@ const SimpleRatingModal = ({ isOpen, onClose, onSubmit }:any) => {
       <div className="bg-white rounded-xl shadow-xl w-[320px] p-6">
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
-          <h3 className="text-lg font-semibold text-gray-800">Đánh giá tour</h3>
+          <h3 className="text-lg font-semibold text-gray-800">
+            {isUpdate ? 'Cập nhật đánh giá' : 'Đánh giá tour'}
+          </h3>
           <button
             onClick={onClose}
             disabled={isSubmitting}
@@ -88,7 +94,7 @@ const SimpleRatingModal = ({ isOpen, onClose, onSubmit }:any) => {
             disabled={isSubmitting || rating === 0}
             className="flex-1 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {isSubmitting ? 'Đang gửi...' : 'Đánh giá'}
+            {isSubmitting ? 'Đang gửi...' : (isUpdate ? 'Cập nhật' : 'Đánh giá')}
           </button>
         </div>
       </div>
@@ -97,29 +103,142 @@ const SimpleRatingModal = ({ isOpen, onClose, onSubmit }:any) => {
 };
 
 // Demo Component
-const RatingModel = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+interface RatingModelProps {
+  bookingStatus: number;
+  tourId: number;
+  userId: string;
+}
 
-  const handleSubmitRating = async (rating:any) => {
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    console.log('Rating submitted:', rating);
-    alert(`Cảm ơn bạn đã đánh giá ${rating} sao!`);
+const RatingModel = ({ bookingStatus, tourId, userId }: RatingModelProps) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [existingReview, setExistingReview] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const isCompleted = bookingStatus === 2; // Only allow rating when booking is COMPLETED (status = 2)
+
+  useEffect(() => {
+    const fetchExistingReview = async () => {
+      if (!isCompleted) {
+        setIsLoading(false);
+        return;
+      }
+
+      try {
+        const response = await fetch(
+          `http://localhost:8088/api/reviews/tour/${tourId}/user/${userId}`
+        );
+
+        if (response.ok) {
+          const data = await response.json();
+          setExistingReview(data);
+        }
+      } catch (error) {
+        // No existing review, that's fine
+        console.log('No existing review found');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchExistingReview();
+  }, [tourId, userId, isCompleted]);
+
+  const handleSubmitRating = async (rating: any) => {
+    try {
+      const isUpdate = !!existingReview;
+      const url = isUpdate
+        ? `http://localhost:8088/api/reviews/${existingReview.id}`
+        : `http://localhost:8088/api/reviews`;
+
+      const response = await fetch(url, {
+        method: isUpdate ? 'PUT' : 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          tour_id: tourId,
+          user_id: parseInt(userId),
+          rating,
+          comment: existingReview?.comment || '',
+        }),
+      });
+
+      if (!response.ok) {
+        const contentType = response.headers.get('content-type');
+        let errorMessage = 'Failed to submit rating';
+
+        if (contentType && contentType.includes('application/json')) {
+          const error = await response.json();
+          errorMessage = error.message || errorMessage;
+        } else {
+          errorMessage = await response.text();
+        }
+
+        throw new Error(errorMessage);
+      }
+
+      const updatedReview = await response.json();
+      setExistingReview(updatedReview);
+
+      console.log('Rating submitted:', rating);
+      alert(isUpdate
+        ? `Đã cập nhật đánh giá ${rating} sao!`
+        : `Cảm ơn bạn đã đánh giá ${rating} sao!`);
+    } catch (error: any) {
+      console.error('Error submitting rating:', error);
+      alert(error.message || 'Không thể gửi đánh giá. Vui lòng thử lại!');
+    }
   };
 
+  // If booking is not completed, show disabled button with tooltip
+  if (!isCompleted) {
+    return (
+      <div
+        className="flex items-center justify-center p-4"
+        title="Chỉ có thể đánh giá khi tour đã hoàn thành"
+      >
+        <button
+          disabled
+          className="px-3 py-3 bg-gray-300 text-gray-500 rounded-lg cursor-not-allowed font-medium opacity-50"
+        >
+          ⭐
+        </button>
+      </div>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center p-4">
+        <button
+          disabled
+          className="px-3 py-3 bg-gray-300 text-gray-500 rounded-lg cursor-wait font-medium"
+        >
+          ⭐
+        </button>
+      </div>
+    );
+  }
+
   return (
-    <div className="  flex items-center justify-center p-4">
+    <div className="flex items-center justify-center p-4">
       <button
         onClick={() => setIsModalOpen(true)}
-        className="px-3 py-3 bg-yellow-200 text-white rounded-lg hover:bg-blue-400 transition font-medium"
+        className={`px-3 py-3 rounded-lg transition font-medium ${
+          existingReview
+            ? 'bg-green-200 hover:bg-green-300'
+            : 'bg-yellow-200 hover:bg-yellow-300'
+        }`}
+        title={existingReview ? `Đã đánh giá ${existingReview.rating} sao` : 'Đánh giá tour'}
       >
-        ⭐
+        {existingReview ? `⭐ ${existingReview.rating}` : '⭐'}
       </button>
 
       <SimpleRatingModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onSubmit={handleSubmitRating}
+        initialRating={existingReview?.rating || 0}
+        isUpdate={!!existingReview}
       />
     </div>
   );

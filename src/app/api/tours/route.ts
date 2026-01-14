@@ -29,27 +29,68 @@ export interface TourDetailResponse {
   promotionName: string;
 }
 
-export const getTours = (
+export interface TourFilterParams {
+  offset: number;
+  limit: number;
+  typeId?: number | null;
+  name?: string;
+  startLocation?: string;
+  destination?: string;
+  departureDate?: string;
+  adultCount?: number;
+  childCount?: number;
+  infantCount?: number;
+  priceFrom?: number;
+  priceTo?: number;
+}
+
+// Overloaded function signatures
+export function getTours(params: TourFilterParams): ReturnType<typeof api.get<TourListResponse>>;
+export function getTours(
   offset: number,
   limit: number,
-  typeId: number | null,
-  name: string,
+  typeId?: number | null,
+  name?: string,
   priceFrom?: number,
   priceTo?: number,
   startDate?: string
-) => {
-  return api.get<TourListResponse>("/tours", {
-    params: {
-      offset,
-      limit,
-      typeId: typeId ?? undefined,
-      name,
-      priceFrom,
-      priceTo,
-      startDate,
-    },
-  });
-};
+): ReturnType<typeof api.get<TourListResponse>>;
+
+// Implementation
+export function getTours(
+  paramsOrOffset: TourFilterParams | number,
+  limit?: number,
+  typeId?: number | null,
+  name?: string,
+  priceFrom?: number,
+  priceTo?: number,
+  startDate?: string
+) {
+  // Check if first parameter is an object (new signature) or number (old signature)
+  if (typeof paramsOrOffset === 'object') {
+    const params = paramsOrOffset;
+    return api.get<TourListResponse>("/tours", {
+      params: {
+        ...params,
+        typeId: params.typeId ?? undefined,
+      },
+    });
+  } else {
+    // Old signature - convert to new format
+    const offset = paramsOrOffset;
+    return api.get<TourListResponse>("/tours", {
+      params: {
+        offset,
+        limit,
+        typeId: typeId ?? undefined,
+        name,
+        priceFrom,
+        priceTo,
+        startDate,
+      },
+    });
+  }
+}
 
 export const getTourDetail = (id: number) => {
   return api.get<TourDetailResponse>(`/tours/${id}`);

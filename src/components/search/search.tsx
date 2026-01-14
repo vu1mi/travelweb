@@ -1,6 +1,6 @@
 "use client";
 
-import { SearchIcon } from "lucide-react";
+import { SearchIcon, X } from "lucide-react";
 import * as React from "react";
 import {
   InputGroup,
@@ -60,7 +60,7 @@ type SrearchValue = {
 
 export default function Search() {
   const router = useRouter();
-  const [date, setDate] = React.useState<Date | undefined>(new Date());
+  const [date, setDate] = React.useState<Date | undefined>(undefined);
   const [open, setOpen] = React.useState(false);
   const [dataform, setDataform] = React.useState<SrearchValue>({
     name: "",
@@ -70,16 +70,29 @@ export default function Search() {
   });
 
   // fomat ngay
-  let day = String(date?.getDate()).padStart(2, "0");
-  let month = String(date?.getMonth() + 1).padStart(2, "0");
-  let year = String(date?.getFullYear());
-  let datefomat = day + "/" + month + "/" + year;
-  dataform.startDate = datefomat;
+  React.useEffect(() => {
+    if (date) {
+      let day = String(date.getDate()).padStart(2, "0");
+      let month = String(date.getMonth() + 1).padStart(2, "0");
+      let year = String(date.getFullYear());
+      let datefomat = day + "/" + month + "/" + year;
+      setDataform((prev) => ({ ...prev, startDate: datefomat }));
+    } else {
+      setDataform((prev) => ({ ...prev, startDate: "" }));
+    }
+  }, [date]);
 
   function showCalendar() {
     const calendar = document.querySelector(".calendar");
-    calendar?.classList.remove("hidden");
+    calendar?.classList.toggle("hidden");
   }
+
+  const handleDateSelect = (selectedDate: Date | undefined) => {
+    setDate(selectedDate);
+    // Close calendar after selection
+    const calendar = document.querySelector(".calendar");
+    calendar?.classList.add("hidden");
+  };
 
   function HandleChange(e: React.ChangeEvent<HTMLInputElement>) {
     const { name, value } = e.target;
@@ -91,10 +104,10 @@ export default function Search() {
       0,
       4,
       null,
-      dataform.name,
-      dataform.priceFrom,
-      dataform.priceTo,
-      dataform.startDate
+      dataform.name || undefined,
+      dataform.priceFrom || undefined,
+      dataform.priceTo || undefined,
+      dataform.startDate || undefined
     );
     // const result = await res.json();
     console.log("Filter result:", res.data);
@@ -155,25 +168,37 @@ export default function Search() {
               </SelectGroup>
             </SelectContent>
           </Select>
-          <div
-            className="bg-white w-[300px] h-[60px] rounded-md flex items-center relative "
-            onClick={showCalendar}
-          >
-            <Image
-              src={"/icon-calendar.svg"}
-              alt="icon-adress"
-              width={20}
-              height={20}
-              className="ml-4"
-            />
-            <span className=" ml-4 text-xl text-[#4502c7] font-medium">
-              {date?.toLocaleDateString()}
-            </span>
+          <div className="bg-white w-[300px] h-[60px] rounded-md flex items-center justify-between relative cursor-pointer">
+            <div className="flex items-center flex-1" onClick={showCalendar}>
+              <Image
+                src={"/icon-calendar.svg"}
+                alt="icon-adress"
+                width={20}
+                height={20}
+                className="ml-4"
+              />
+              <span className={`ml-4 text-xl font-medium ${date ? 'text-[#4502c7]' : 'text-gray-400'}`}>
+                {date ? date.toLocaleDateString() : 'Chọn ngày khởi hành'}
+              </span>
+            </div>
+            {date && (
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setDate(undefined);
+                }}
+                className="mr-3 p-1 hover:bg-gray-100 rounded-full transition"
+                title="Xóa ngày đã chọn"
+              >
+                <X size={18} className="text-gray-500" />
+              </button>
+            )}
             <Calendar
               mode="single"
               selected={date}
-              onSelect={setDate}
-              className="rounded-md border shadow-sm absolute top-[70px] z-10 rounded-md hidden calendar"
+              onSelect={handleDateSelect}
+              className="rounded-md border shadow-sm absolute top-[70px] z-10 rounded-md hidden calendar bg-white"
               captionLayout="dropdown"
             />
           </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Filter } from "lucide-react";
 
 interface FilterFormData {
@@ -13,7 +13,20 @@ interface FilterFormData {
   priceRange: string;
 }
 
-const FilterForm: React.FC = () => {
+interface FilterFormProps {
+  onFilterApply?: (filters: {
+    startLocation?: string;
+    destination?: string;
+    departureDate?: string;
+    adultCount?: number;
+    childCount?: number;
+    infantCount?: number;
+    priceFrom?: number;
+    priceTo?: number;
+  }) => void;
+}
+
+const FilterForm: React.FC<FilterFormProps> = ({ onFilterApply }) => {
   const [formData, setFormData] = useState<FilterFormData>({
     departure: "",
     destination: "",
@@ -24,6 +37,11 @@ const FilterForm: React.FC = () => {
     priceRange: "",
   });
 
+  useEffect(() => {
+    console.log("FilterForm mounted!");
+    console.log("onFilterApply prop:", onFilterApply);
+  }, []);
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
@@ -31,10 +49,46 @@ const FilterForm: React.FC = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const convertPriceRange = (
+    range: string
+  ): { priceFrom?: number; priceTo?: number } => {
+    switch (range) {
+      case "duoi10":
+        return { priceTo: 10000000 };
+      case "10-20":
+        return { priceFrom: 10000000, priceTo: 20000000 };
+      case "tren20":
+        return { priceFrom: 20000000 };
+      default:
+        return {};
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Dữ liệu lọc:", formData);
-    // TODO: Gửi dữ liệu lọc ra ngoài hoặc gọi API
+    console.log("Form submitted!", formData);
+    console.log("onFilterApply exists?", !!onFilterApply);
+
+    const priceFilter = convertPriceRange(formData.priceRange);
+
+    const filters = {
+      startLocation: formData.departure || undefined,
+      destination: formData.destination || undefined,
+      departureDate: formData.date || undefined,
+      adultCount: formData.adults > 0 ? formData.adults : undefined,
+      childCount: formData.children > 0 ? formData.children : undefined,
+      infantCount: formData.babies > 0 ? formData.babies : undefined,
+      ...priceFilter,
+    };
+
+    console.log("Dữ liệu lọc:", filters);
+
+    if (onFilterApply) {
+      console.log("Calling onFilterApply...");
+      onFilterApply(filters);
+    } else {
+      console.warn("onFilterApply not provided!");
+    }
   };
 
   return (
@@ -152,7 +206,10 @@ const FilterForm: React.FC = () => {
       {/* Nút áp dụng */}
       <button
         type="submit"
-        className="w-full bg-purple-700 hover:bg-purple-800 text-white font-semibold py-2 rounded-lg transition"
+        onClick={(e) => {
+          console.log("Button clicked!");
+        }}
+        className="w-full bg-purple-700 hover:bg-purple-800 text-white font-semibold py-2 rounded-lg transition cursor-pointer"
       >
         Áp Dụng
       </button>

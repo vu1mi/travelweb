@@ -9,8 +9,9 @@ interface CartItem {
   id: number;
   tourId: number;
   tourName: string;
+  tourImage: string;
   departureDate: number[];
-  departureLocation:string;
+  departureLocation: string;
   adultCount: number;
   childCount: number;
   infantCount: number;
@@ -22,36 +23,31 @@ interface CartItem {
 
 export default function CartClient() {
   const { userId } = useAppContext();
-  
+
   const [items, setItems] = useState<CartItem[] | null>(null);
-  const [data , setData] = useState<any>()
+  const [data, setData] = useState<any>();
 
-
- async function loadData() {
+  async function loadData() {
     const res = await fetch(
       `http://localhost:8088/api/bookings/user/${userId}`,
       { cache: "no-store" }
     );
     const result = await res.json();
     setItems(result.items);
-    setData(result)
-    
+    setData(result);
   }
 
   useEffect(() => {
     if (userId) loadData();
   }, [userId]);
 
-  console.log("databooking",data)
+  console.log("databooking", data);
   // if (!items) return <div>Loading...</div>;
 
   return (
     <>
-   
-        <CartSummary data={items} onRefresh={loadData}/>
+      <CartSummary data={items} bookingData={data} onRefresh={loadData} />
       <PaymentForm data={data} />
-
-     
     </>
   );
 }

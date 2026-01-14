@@ -4,118 +4,114 @@ import { useAppContext } from "@/app/AppProvider";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
-export default function PaymentForm(data:any) {
+export default function PaymentForm(data: any) {
   const route = useRouter();
   const { userId } = useAppContext();
-  const [username , setUsername] = useState('')
-  const [phone , setPhone] = useState('')
-  const [payId , setPayId] = useState(0)
-  const [note , setNote] = useState('')
-  const [payStatus , setPayStartus] = useState(0)
+  const [username, setUsername] = useState("");
+  const [phone, setPhone] = useState("");
+  const [payId, setPayId] = useState(0);
+  const [note, setNote] = useState("");
+  const [payStatus, setPayStartus] = useState(0);
   const idbooking = data?.data?.id ?? 0;
-  console.log(idbooking)
-  const formData= {
-    userId:userId,
+  console.log(idbooking);
+  const formData = {
+    userId: userId,
     customerName: username,
     customerPhone: phone,
-    paymentMethodId:payId,
-    paymentStatus:payStatus,
-    status:1,
-    note: note
+    paymentMethodId: payId,
+    paymentStatus: payStatus,
+    status: 0,
+    note: note,
   };
 
-
-
-  const handlePaymentSelect =  (method:number) => {
-    setPayId(method)
+  const handlePaymentSelect = (method: number) => {
+    setPayId(method);
   };
 
-  const handleSubmit = async  (e:React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-   
-     if (!username.trim()) {
+
+    if (!username.trim()) {
       toast.warning("Tên không được để trống");
-    return;
-  }
+      return;
+    }
 
-  if (!phone.trim()) {
-    toast.warning("Số điện thoại không được để trống");
-    return;
-  }
+    if (!phone.trim()) {
+      toast.warning("Số điện thoại không được để trống");
+      return;
+    }
 
-  if (phone.length < 10|| phone[0] !== "0") {
-    toast.warning("Số điện thoại không hợp lệ");
-    return;
-  }
-  if (payId === 0) {
-    toast.warning("Chọn phương thức thanh toán");
-    return;
-  }
-  if(idbooking === 0){
-    toast.warning("Tour đang trống");
-    return;
-  }
-  try{
-  
-      const res = await fetch(`http://localhost:8088/api/bookings/${idbooking}`,
+    if (phone.length < 10 || phone[0] !== "0") {
+      toast.warning("Số điện thoại không hợp lệ");
+      return;
+    }
+    if (payId === 0) {
+      toast.warning("Chọn phương thức thanh toán");
+      return;
+    }
+    if (idbooking === 0) {
+      toast.warning("Tour đang trống");
+      return;
+    }
+    try {
+      const res = await fetch(
+        `http://localhost:8088/api/bookings/${idbooking}`,
         {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(formData)
-  }
-      ) 
-      const result = await res.json()
-      if(!res.ok){
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(formData),
+        }
+      );
+      const result = await res.json();
+      if (!res.ok) {
         throw new Error("Update failed");
       }
-      if(payId === 3){
-        const res = await fetch("http://localhost:8088/api/vnpay/create-payment" , 
+      if (payId === 3) {
+        const res = await fetch(
+          "http://localhost:8088/api/vnpay/create-payment",
           {
-             method: "POST",
-             headers: {
-             "Content-Type": "application/json"
-                  },
-               body: JSON.stringify({
-               bookingId: idbooking
-          })
-         }
-        ).then( async res => {
-            const data = await res.json();
-            window.location.href = data.paymentUrl;
-            console.log("vnpay res:" , data)
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              bookingId: idbooking,
+            }),
+          }
+        ).then(async (res) => {
+          const data = await res.json();
+          window.location.href = data.paymentUrl;
+          console.log("vnpay res:", data);
 
-            return data
-        })
-     
-      }else{
-         console.log("dat tua thanh cong", result)
-         toast.success("Thanh cong");
-         route.push("/")
+          return data;
+        });
+      } else {
+        console.log("dat tua thanh cong", result);
+        toast.success("Thanh cong");
+        route.push("/");
       }
-    
-  
-  }catch(error){
-    console.log(error)
-    toast.error("That bai");
-
-  }
+    } catch (error) {
+      console.log(error);
+      toast.error("That bai");
+    }
   };
-     const params = new URLSearchParams(window.location.search);
-      const success = params.get("success");
-        if(success === "true"){
-          fetchlasttour()
-          toast.success("Thanh toán thành công")
-        }else if(success === "true"){
-           toast.error("Thanh toán thất bại ")
-        }
+  const params = new URLSearchParams(window.location.search);
+  const success = params.get("success");
+  if (success === "true") {
+    fetchlasttour();
+    toast.success("Thanh toán thành công");
+  } else if (success === "true") {
+    toast.error("Thanh toán thất bại ");
+  }
 
-        async function fetchlasttour(){
-          const res = await fetch(`http://localhost:8088/api/bookings/user/${userId}/all`)
-          const data = await res.json()
-      
-          const lastorderid = data[data.length - 1].id
-          
-        }
+  async function fetchlasttour() {
+    const res = await fetch(
+      `http://localhost:8088/api/bookings/user/${userId}/all`
+    );
+    const data = await res.json();
+
+    const lastorderid = data[data.length - 1].id;
+  }
 
   return (
     <div className="bg-white p-6 rounded-2xl shadow-md max-w-3xl mx-auto mt-6">
@@ -130,7 +126,9 @@ export default function PaymentForm(data:any) {
             name="name"
             placeholder="Họ và tên"
             value={username}
-            onChange={(e)=>{setUsername(e.target.value)}}
+            onChange={(e) => {
+              setUsername(e.target.value);
+            }}
             className="border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-purple-600"
           />
           <input
@@ -138,7 +136,7 @@ export default function PaymentForm(data:any) {
             name="phone"
             placeholder="Số điện thoại"
             value={phone}
-            onChange={e=>setPhone(e.target.value)}
+            onChange={(e) => setPhone(e.target.value)}
             className="border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-purple-600"
           />
         </div>
@@ -148,7 +146,7 @@ export default function PaymentForm(data:any) {
           rows="3"
           placeholder="Ghi chú"
           value={note}
-          onChange={e=> setNote(e.target.value)}
+          onChange={(e) => setNote(e.target.value)}
           className="border border-gray-300 rounded-lg p-3 w-full focus:outline-none focus:ring-2 focus:ring-purple-600"
         />
 
@@ -157,7 +155,7 @@ export default function PaymentForm(data:any) {
           Chọn Phương Thức Thanh Toán
         </h2>
         <div className="flex flex-col gap-2 mt-2">
-          {[1, 2, 3,4,5].map((method) => (
+          {[1, 2, 3, 4, 5].map((method) => (
             <label key={method} className="flex items-center gap-2">
               <input
                 type="checkbox"
@@ -195,7 +193,6 @@ export default function PaymentForm(data:any) {
 
         {/* Nút đặt tour */}
         <button
-     
           type="submit"
           className="bg-purple-700 hover:bg-purple-800 text-white font-semibold w-full py-3 rounded-lg mt-6 transition-all"
         >

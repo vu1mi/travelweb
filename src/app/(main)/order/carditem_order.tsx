@@ -1,5 +1,4 @@
 "use client";
-import Image from "next/image";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import {deleteItemcart} from "../../api/booking_item/route"
@@ -10,6 +9,7 @@ interface CartItem {
   id: number;
   tourId: number;
   tourName: string;
+  tourImage: string;
   departureDate: number[];
   departureLocation:string;
   adultCount: number;
@@ -58,13 +58,30 @@ export default function CardItemOrder({ data, onRefresh }: SummaryProps) {
   const routeTour=()=>{
     route.push(`/order/${tour.tourId}`)
   }
+
+  const imageUrl = tour.tourImage
+    ? `http://localhost:8088/api/tours/images/${tour.tourImage}`
+    : '/placeholder-tour.jpg';
+
   return (
     <div onClick={routeTour} className="flex items-start gap-4 p-4  bg-white w-full shadow-md rounded-xl hover:translate-[-2px] ">
       <FontAwesomeIcon
         icon={faXmark}
-        onClick={deleteItem}
+        onClick={(e) => {
+          e.stopPropagation();
+          deleteItem();
+        }}
         className="cursor-pointer hover:scale-125 transition-all  "
       />
+
+      {/* Hình ảnh tour */}
+      <div className="w-32 h-32 flex-shrink-0 rounded-lg overflow-hidden">
+        <img
+          src={imageUrl}
+          alt={tour.tourName}
+          className="w-full h-full object-cover"
+        />
+      </div>
 
       {/* Thông tin tour */}
       <div className="flex-1">
