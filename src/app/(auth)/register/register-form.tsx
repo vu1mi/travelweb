@@ -75,7 +75,7 @@ export default function RegisterForm() {
         customerName: data.name,
         paymentStatus: 0,
         note: "Note",
-        status: 0,
+        status: 4,
       };
       const bookingRes = await fetch("http://localhost:8088/api/bookings", {
         method: "POST",
