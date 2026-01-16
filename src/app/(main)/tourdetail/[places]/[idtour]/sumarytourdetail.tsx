@@ -49,17 +49,6 @@ export default function TourCardSumary({ data }: { data: any }) {
   const [daparture, setDeparture] = useState("Hà Nội");
   const tour = data;
   const { userId } = useAppContext();
-  console.log("Tour data in TourCardSumary:", data);
-  const valueForm: formValue = {
-    tourId: tour?.id,
-    userId: parseInt(userId),
-    departureLocation: daparture,
-    locationId: 2,
-    adultCount: adults,
-    childCount: children,
-    infantCount: babies,
-  };
-  console.log("tour id", userId);
   const total = useMemo(() => {
     return (
       adults * tour.priceAdult +
@@ -78,7 +67,18 @@ export default function TourCardSumary({ data }: { data: any }) {
   function handleBooking() {
     if (adults === 0 && children === 0 && babies === 0) {
       toast.warning("Cần thêm số lượng khách");
+    } else if (!userId) {
+      toast.error("Vui lòng đăng nhập để đặt tour");
     } else {
+      const valueForm: formValue = {
+        tourId: tour?.id,
+        userId: parseInt(userId),
+        departureLocation: daparture,
+        locationId: 2,
+        adultCount: adults,
+        childCount: children,
+        infantCount: babies,
+      };
       async function postitem() {
         try {
           const result = await fetch(
