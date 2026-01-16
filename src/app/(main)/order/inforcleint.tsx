@@ -60,6 +60,7 @@ export default function PaymentForm(data: any) {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(formData),
+          credentials: "include",
         }
       );
       const result = await res.json();
@@ -77,6 +78,7 @@ export default function PaymentForm(data: any) {
             body: JSON.stringify({
               bookingId: idbooking,
             }),
+            credentials: "include",
           }
         ).then(async (res) => {
           const data = await res.json();
@@ -106,7 +108,10 @@ export default function PaymentForm(data: any) {
 
   async function fetchlasttour() {
     const res = await fetch(
-      `http://localhost:8088/api/bookings/user/${userId}/all`
+      `http://localhost:8088/api/bookings/user/${userId}/all`,
+      {
+        credentials: "include",
+      }
     );
     const data = await res.json();
 

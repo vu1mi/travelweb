@@ -89,6 +89,7 @@ export default function TourCardSumary({ data }: { data: any }) {
               headers: {
                 "Content-Type": "application/json",
               },
+              credentials: "include",
             }
           ).then(async (res) => {
             const payload = await res.json();

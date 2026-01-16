@@ -30,7 +30,7 @@ export default function CartClient() {
   async function loadData() {
     const res = await fetch(
       `http://localhost:8088/api/bookings/user/${userId}`,
-      { cache: "no-store" }
+      { cache: "no-store", credentials: "include" }
     );
     const result = await res.json();
     setItems(result.items);

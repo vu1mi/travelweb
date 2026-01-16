@@ -1,5 +1,5 @@
-// src/app/api/websiteApi.ts
-// Service để gọi API backend Spring Boot cho Website Settings
+// src/app/api/contactApi.ts
+// Service để gọi API backend Spring Boot cho Contact
 
 import axios from "axios";
 
@@ -18,22 +18,23 @@ const api = axios.create({
 
 // ============== TYPES ==============
 
-export interface WebsiteSettingResponse {
-  id: number;
-  websiteName: string;
-  phone: string;
+export interface ContactRequest {
   email: string;
-  address: string;
+}
+
+export interface ContactResponse {
+  id: number;
+  email: string;
 }
 
 // ============== API FUNCTIONS ==============
 
 /**
- * Lấy thông tin website settings (public endpoint)
+ * Gửi thông tin liên hệ (public endpoint)
  */
-export const getWebsiteSettings = async () => {
-  console.log("🚀 Calling getWebsiteSettings API");
-  return api.get<WebsiteSettingResponse>("/website-settings");
+export const createContact = async (data: ContactRequest) => {
+  console.log("🚀 Calling createContact API:", data);
+  return api.post<ContactResponse>("/contacts", data);
 };
 
 // Export axios instance nếu cần custom requests

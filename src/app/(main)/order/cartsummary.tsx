@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import {  useMemo, useState} from "react";
+import { useMemo, useState } from "react";
 import CardItemOrder from "@/app/(main)/order/carditem_order";
 import { toast } from "sonner";
 
@@ -11,7 +11,7 @@ interface CartItem {
   tourName: string;
   tourImage: string;
   departureDate: number[];
-  departureLocation:string;
+  departureLocation: string;
   adultCount: number;
   childCount: number;
   infantCount: number;
@@ -42,11 +42,17 @@ interface SummaryProps {
   onRefresh: () => Promise<void>;
 }
 
-export default function CartSummary( { data, bookingData, onRefresh }: SummaryProps) {
+export default function CartSummary({
+  data,
+  bookingData,
+  onRefresh,
+}: SummaryProps) {
   const [discount, setDiscount] = useState<number>(0);
   const [discountAmount, setDiscountAmount] = useState<number>(0);
   const [discountcode, setDiscountCode] = useState<string>("");
-  const [appliedVoucher, setAppliedVoucher] = useState<VoucherResponse | null>(null);
+  const [appliedVoucher, setAppliedVoucher] = useState<VoucherResponse | null>(
+    null
+  );
   const [isApplying, setIsApplying] = useState(false);
 
   console.log("log data", data);
@@ -58,11 +64,17 @@ export default function CartSummary( { data, bookingData, onRefresh }: SummaryPr
     );
   }, [data]);
 
-  const calculateDiscount = (voucher: VoucherResponse, total: number): number => {
+  const calculateDiscount = (
+    voucher: VoucherResponse,
+    total: number
+  ): number => {
     if (voucher.discountType === "PERCENTAGE") {
       const discountAmount = (total * voucher.discountValue) / 100;
       // Apply max discount if specified
-      if (voucher.maxDiscountAmount && discountAmount > voucher.maxDiscountAmount) {
+      if (
+        voucher.maxDiscountAmount &&
+        discountAmount > voucher.maxDiscountAmount
+      ) {
         return voucher.maxDiscountAmount;
       }
       return discountAmount;
@@ -96,6 +108,7 @@ export default function CartSummary( { data, bookingData, onRefresh }: SummaryPr
           headers: {
             "Content-Type": "application/json",
           },
+          credentials: "include",
           body: JSON.stringify({ voucherCode: discountcode }),
         }
       );
@@ -112,7 +125,9 @@ export default function CartSummary( { data, bookingData, onRefresh }: SummaryPr
       // Check min purchase amount
       if (voucher.minPurchaseAmount && total < voucher.minPurchaseAmount) {
         toast.warning(
-          `Đơn hàng tối thiểu ${voucher.minPurchaseAmount.toLocaleString("vi-VN")}đ để áp dụng voucher này`
+          `Đơn hàng tối thiểu ${voucher.minPurchaseAmount.toLocaleString(
+            "vi-VN"
+          )}đ để áp dụng voucher này`
         );
         return;
       }
@@ -146,6 +161,7 @@ export default function CartSummary( { data, bookingData, onRefresh }: SummaryPr
         `http://localhost:8088/api/vouchers/bookings/${bookingData.id}/remove-voucher`,
         {
           method: "DELETE",
+          credentials: "include",
         }
       );
 
@@ -179,11 +195,17 @@ export default function CartSummary( { data, bookingData, onRefresh }: SummaryPr
             Quay lại mua hàng →
           </Link>
         </div>
-        
+
         <div className="flex flex-col gap-10">
-          { (data && data.length !== 0) ? data?.map((item) => (
-            <CardItemOrder data={item} key={item.id} onRefresh={onRefresh}/>
-          )) : <div className="h-[200px] flex justify-center items-center text-3xl text-blue-700 ">Chưa có tour nào</div>}
+          {data && data.length !== 0 ? (
+            data?.map((item) => (
+              <CardItemOrder data={item} key={item.id} onRefresh={onRefresh} />
+            ))
+          ) : (
+            <div className="h-[200px] flex justify-center items-center text-3xl text-blue-700 ">
+              Chưa có tour nào
+            </div>
+          )}
         </div>
       </div>
 
@@ -226,7 +248,9 @@ export default function CartSummary( { data, bookingData, onRefresh }: SummaryPr
                 <p className="text-green-700 font-semibold">
                   Mã: {appliedVoucher.code}
                 </p>
-                <p className="text-sm text-green-600">{appliedVoucher.description}</p>
+                <p className="text-sm text-green-600">
+                  {appliedVoucher.description}
+                </p>
               </div>
               <div className="text-right">
                 <p className="text-green-700 font-bold">

@@ -3,7 +3,8 @@ export const dynamic = "force-dynamic";
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://localhost:8088/api", // backend của bạn
+  baseURL: "http://localhost:8088/api",
+  withCredentials: true,
 });
 export interface TourListResponse {
   totalPages: number;

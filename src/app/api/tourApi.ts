@@ -13,24 +13,8 @@ const api = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
+  withCredentials: true,
 });
-
-// Add request interceptor để thêm token (nếu có)
-api.interceptors.request.use(
-  (config) => {
-    // Lấy token từ localStorage nếu có
-    if (typeof window !== "undefined") {
-      const token = localStorage.getItem("sessionToken");
-      if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-      }
-    }
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
 
 // Add response interceptor để handle errors
 api.interceptors.response.use(

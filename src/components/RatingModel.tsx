@@ -1,7 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 
 // Simple Star Rating Modal
-const SimpleRatingModal = ({ isOpen, onClose, onSubmit, initialRating, isUpdate }:any) => {
+const SimpleRatingModal = ({
+  isOpen,
+  onClose,
+  onSubmit,
+  initialRating,
+  isUpdate,
+}: any) => {
   const [rating, setRating] = useState(initialRating || 0);
   const [hover, setHover] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -14,7 +20,7 @@ const SimpleRatingModal = ({ isOpen, onClose, onSubmit, initialRating, isUpdate 
 
   const handleSubmit = async () => {
     if (rating === 0) {
-      alert('Vui lòng chọn số sao đánh giá');
+      alert("Vui lòng chọn số sao đánh giá");
       return;
     }
 
@@ -23,7 +29,7 @@ const SimpleRatingModal = ({ isOpen, onClose, onSubmit, initialRating, isUpdate 
       await onSubmit(rating);
       onClose();
     } catch (err) {
-      alert('Không thể gửi đánh giá');
+      alert("Không thể gửi đánh giá");
     } finally {
       setIsSubmitting(false);
     }
@@ -37,7 +43,7 @@ const SimpleRatingModal = ({ isOpen, onClose, onSubmit, initialRating, isUpdate 
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
           <h3 className="text-lg font-semibold text-gray-800">
-            {isUpdate ? 'Cập nhật đánh giá' : 'Đánh giá tour'}
+            {isUpdate ? "Cập nhật đánh giá" : "Đánh giá tour"}
           </h3>
           <button
             onClick={onClose}
@@ -62,8 +68,8 @@ const SimpleRatingModal = ({ isOpen, onClose, onSubmit, initialRating, isUpdate 
               <svg
                 className={`w-10 h-10 ${
                   star <= (hover || rating)
-                    ? 'fill-yellow-400 text-yellow-400'
-                    : 'fill-gray-200 text-gray-200'
+                    ? "fill-yellow-400 text-yellow-400"
+                    : "fill-gray-200 text-gray-200"
                 } transition-colors`}
                 viewBox="0 0 24 24"
               >
@@ -76,7 +82,8 @@ const SimpleRatingModal = ({ isOpen, onClose, onSubmit, initialRating, isUpdate 
         {/* Rating Display */}
         {rating > 0 && (
           <p className="text-center text-gray-600 mb-6">
-            Bạn đã chọn: <span className="font-bold text-yellow-500">{rating}</span> sao
+            Bạn đã chọn:{" "}
+            <span className="font-bold text-yellow-500">{rating}</span> sao
           </p>
         )}
 
@@ -94,7 +101,7 @@ const SimpleRatingModal = ({ isOpen, onClose, onSubmit, initialRating, isUpdate 
             disabled={isSubmitting || rating === 0}
             className="flex-1 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {isSubmitting ? 'Đang gửi...' : (isUpdate ? 'Cập nhật' : 'Đánh giá')}
+            {isSubmitting ? "Đang gửi..." : isUpdate ? "Cập nhật" : "Đánh giá"}
           </button>
         </div>
       </div>
@@ -124,7 +131,10 @@ const RatingModel = ({ bookingStatus, tourId, userId }: RatingModelProps) => {
 
       try {
         const response = await fetch(
-          `http://localhost:8088/api/reviews/tour/${tourId}/user/${userId}`
+          `http://localhost:8088/api/reviews/tour/${tourId}/user/${userId}`,
+          {
+            credentials: "include",
+          }
         );
 
         if (response.ok) {
@@ -133,7 +143,7 @@ const RatingModel = ({ bookingStatus, tourId, userId }: RatingModelProps) => {
         }
       } catch (error) {
         // No existing review, that's fine
-        console.log('No existing review found');
+        console.log("No existing review found");
       } finally {
         setIsLoading(false);
       }
@@ -150,23 +160,24 @@ const RatingModel = ({ bookingStatus, tourId, userId }: RatingModelProps) => {
         : `http://localhost:8088/api/reviews`;
 
       const response = await fetch(url, {
-        method: isUpdate ? 'PUT' : 'POST',
+        method: isUpdate ? "PUT" : "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           tour_id: tourId,
           user_id: parseInt(userId),
           rating,
-          comment: existingReview?.comment || '',
+          comment: existingReview?.comment || "",
         }),
+        credentials: "include",
       });
 
       if (!response.ok) {
-        const contentType = response.headers.get('content-type');
-        let errorMessage = 'Failed to submit rating';
+        const contentType = response.headers.get("content-type");
+        let errorMessage = "Failed to submit rating";
 
-        if (contentType && contentType.includes('application/json')) {
+        if (contentType && contentType.includes("application/json")) {
           const error = await response.json();
           errorMessage = error.message || errorMessage;
         } else {
@@ -179,13 +190,15 @@ const RatingModel = ({ bookingStatus, tourId, userId }: RatingModelProps) => {
       const updatedReview = await response.json();
       setExistingReview(updatedReview);
 
-      console.log('Rating submitted:', rating);
-      alert(isUpdate
-        ? `Đã cập nhật đánh giá ${rating} sao!`
-        : `Cảm ơn bạn đã đánh giá ${rating} sao!`);
+      console.log("Rating submitted:", rating);
+      alert(
+        isUpdate
+          ? `Đã cập nhật đánh giá ${rating} sao!`
+          : `Cảm ơn bạn đã đánh giá ${rating} sao!`
+      );
     } catch (error: any) {
-      console.error('Error submitting rating:', error);
-      alert(error.message || 'Không thể gửi đánh giá. Vui lòng thử lại!');
+      console.error("Error submitting rating:", error);
+      alert(error.message || "Không thể gửi đánh giá. Vui lòng thử lại!");
     }
   };
 
@@ -225,12 +238,16 @@ const RatingModel = ({ bookingStatus, tourId, userId }: RatingModelProps) => {
         onClick={() => setIsModalOpen(true)}
         className={`px-3 py-3 rounded-lg transition font-medium ${
           existingReview
-            ? 'bg-green-200 hover:bg-green-300'
-            : 'bg-yellow-200 hover:bg-yellow-300'
+            ? "bg-green-200 hover:bg-green-300"
+            : "bg-yellow-200 hover:bg-yellow-300"
         }`}
-        title={existingReview ? `Đã đánh giá ${existingReview.rating} sao` : 'Đánh giá tour'}
+        title={
+          existingReview
+            ? `Đã đánh giá ${existingReview.rating} sao`
+            : "Đánh giá tour"
+        }
       >
-        {existingReview ? `⭐ ${existingReview.rating}` : '⭐'}
+        {existingReview ? `⭐ ${existingReview.rating}` : "⭐"}
       </button>
 
       <SimpleRatingModal

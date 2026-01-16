@@ -27,8 +27,8 @@ interface UserInfo {
   phone: string;
   birthdate: string;
   address: string;
-  roleCode: 1;
-  roleName: "ROLE_USER";
+  roleCode: "USER";
+  roleName: "Người dùng";
 }
 
 interface MenuItem {
@@ -222,6 +222,7 @@ const ProfileDetails: React.FC<ProfileDetailsProps> = ({
           "Content-Type": "application/json",
         },
         method: "PUT",
+        credentials: "include",
         body: JSON.stringify({ ...userInfo }),
       });
       const data = await res.json();
@@ -430,7 +431,11 @@ const MyTours = ({ tourorder, userId }: MyToursProps) => {
           </span>
         </div>
         <div onClick={(e) => e.stopPropagation()}>
-          <RatingModel bookingStatus={bookingStatus} tourId={touritem.tourId} userId={userId} />
+          <RatingModel
+            bookingStatus={bookingStatus}
+            tourId={touritem.tourId}
+            userId={userId}
+          />
         </div>
       </div>
     );
@@ -449,7 +454,12 @@ const MyTours = ({ tourorder, userId }: MyToursProps) => {
             <X />
           </button>
           {list?.items.map((item, idx) => (
-            <Subitem touritem={item} bookingStatus={list.status} userId={userId} key={idx} />
+            <Subitem
+              touritem={item}
+              bookingStatus={list.status}
+              userId={userId}
+              key={idx}
+            />
           ))}
         </div>
       </div>
@@ -542,6 +552,7 @@ const ChangePassword = ({ userId }: ChangePasswordProps) => {
           headers: {
             "Content-Type": "application/json",
           },
+          credentials: "include",
           body: JSON.stringify({
             oldPassword: passwords.oldPassword,
             newPassword: passwords.newPassword,
@@ -696,12 +707,15 @@ const ProfilePage: React.FC = () => {
     phone: "",
     birthdate: "",
     address: "",
-    roleCode: 1,
-    roleName: "ROLE_USER",
+    roleCode: "USER",
+    roleName: "Người dùng",
   });
 
   const handleLogout = async (): void => {
-    const user = await fetch("/api/logout", { method: "POST" });
+    const user = await fetch("/api/logout", {
+      method: "POST",
+      credentials: "include",
+    });
     router.refresh();
     router.push("/login");
   };
@@ -734,7 +748,9 @@ const ProfilePage: React.FC = () => {
   useEffect(() => {
     try {
       const fetchuser = async () => {
-        const res = await fetch(`http://localhost:8088/api/users/${userId}`);
+        const res = await fetch(`http://localhost:8088/api/users/${userId}`, {
+          credentials: "include",
+        });
         if (!res.ok) {
           throw new Error("That bai");
         }
@@ -751,7 +767,10 @@ const ProfilePage: React.FC = () => {
       };
       const fetchtour = async () => {
         const res = await fetch(
-          `http://localhost:8088/api/bookings/user/${userId}/all`
+          `http://localhost:8088/api/bookings/user/${userId}/all`,
+          {
+            credentials: "include",
+          }
         );
         const data = await res.json();
         if (!res.ok) {
